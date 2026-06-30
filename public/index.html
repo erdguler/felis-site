@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Felis Ödül Kategorileri</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0f;
+    color: #e8e8f0;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0d0d1a 50%, #0a1628 100%);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(139,92,246,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .countdown-bar {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 18px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.2rem 2rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .countdown-label {
+    color: #f87171;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .countdown-units {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cd-block {
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 72px;
+  }
+
+  .cd-num {
+    font-size: 36px;
+    font-weight: 700;
+    color: #fca5a5;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cd-unit {
+    font-size: 10px;
+    color: rgba(232,232,240,0.4);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .cd-sep {
+    font-size: 28px;
+    font-weight: 700;
+    color: rgba(239,68,68,0.4);
+    margin: 0 2px;
+    padding-bottom: 16px;
+  }
+
+  .countdown-bar.urgent .cd-num { color: #f87171; }
+  .countdown-bar.ended .cd-num { color: #6b7280; }
+
+  .header-tag {
+    display: inline-block;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    color: #a78bfa;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+  }
+
+  header h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #e8e8f0 0%, #a78bfa 50%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.8rem;
+  }
+
+  header p {
+    color: rgba(232, 232, 240, 0.55);
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #a78bfa;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: rgba(232,232,240,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .search-bar {
+    max-width: 600px;
+    margin: 2rem auto 0;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 12px;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    color: #e8e8f0;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-bar input:focus {
+    border-color: rgba(139,92,246,0.6);
+    background: rgba(255,255,255,0.07);
+  }
+
+  .search-bar input::placeholder { color: rgba(232,232,240,0.3); }
+
+  .search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(232,232,240,0.3);
+    font-size: 1rem;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .section-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .section-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .section-card:hover {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .section-header:hover {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .section-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #e8e8f0;
+    margin-bottom: 2px;
+  }
+
+  .section-meta {
+    font-size: 12px;
+    color: rgba(232,232,240,0.4);
+  }
+
+  .section-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .count-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    color: rgba(232,232,240,0.35);
+    transition: transform 0.25s ease, color 0.15s;
+    flex-shrink: 0;
+  }
+
+  .section-card.open .chevron {
+    transform: rotate(180deg);
+    color: rgba(232,232,240,0.7);
+  }
+
+  .section-body {
+    display: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .section-card.open .section-body {
+    display: block;
+  }
+
+  .subsection-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 1.1rem 1.5rem 0.5rem;
+    color: rgba(232,232,240,0.35);
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .subsection-title:first-child {
+    border-top: none;
+  }
+
+  .category-list {
+    padding: 0 1rem 1rem;
+  }
+
+  .cat-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.12s;
+    position: relative;
+  }
+
+  .cat-item:hover {
+    background: rgba(255,255,255,0.04);
+  }
+
+  .cat-code {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    letter-spacing: 0.05em;
+  }
+
+  .cat-info { flex: 1; min-width: 0; }
+
+  .cat-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #d8d8e8;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .new-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    background: rgba(16,185,129,0.15);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.25);
+  }
+
+  .cat-desc {
+    font-size: 0.78rem;
+    color: rgba(232,232,240,0.38);
+    line-height: 1.5;
+    margin-top: 3px;
+    display: none;
+  }
+
+  .cat-item.expanded .cat-desc {
+    display: block;
+  }
+
+  .expand-icon {
+    font-size: 0.75rem;
+    color: rgba(232,232,240,0.25);
+    margin-top: 3px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .cat-item.expanded .expand-icon {
+    transform: rotate(180deg);
+    color: rgba(232,232,240,0.5);
+  }
+
+  .our-work-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.15s;
+  }
+
+  .work-panel {
+    display: none;
+    margin-top: 0.5rem;
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    padding: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .work-panel.open { display: block; }
+
+  .work-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    font-size: 12px;
+    color: rgba(232,232,240,0.55);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .work-item:last-child { border-bottom: none; }
+
+  .work-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .add-work-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+
+  .add-work-input input {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: #e8e8f0;
+    font-size: 12px;
+    outline: none;
+  }
+
+  .add-work-input input::placeholder { color: rgba(232,232,240,0.25); }
+
+  .add-btn {
+    background: rgba(139,92,246,0.2);
+    border: 1px solid rgba(139,92,246,0.35);
+    color: #a78bfa;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .add-btn:hover { background: rgba(139,92,246,0.3); }
+
+  .no-results {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: rgba(232,232,240,0.3);
+    font-size: 0.95rem;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    header { padding: 2rem 1rem; }
+    .container { padding: 2rem 1rem; }
+    .stats-bar { gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div id="countdownBar" class="countdown-bar">
+    <span class="countdown-label">⏱ Son Başvuru — 23 Eylül 2025</span>
+    <div class="countdown-units">
+      <div class="cd-block"><div class="cd-num" id="cd-days">--</div><div class="cd-unit">gün</div></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-block"><div class="cd-num" id="cd-hours">--</div><div class="cd-unit">saat</div></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-block"><div class="cd-num" id="cd-mins">--</div><div class="cd-unit">dak</div></div>
+      <span class="cd-sep">:</span>
+      <div class="cd-block"><div class="cd-num" id="cd-secs">--</div><div class="cd-unit">sn</div></div>
+    </div>
+  </div>
+  <div class="header-tag">Felis Ödülleri</div>
+  <h1>Kategori Listesi</h1>
+  <p>Yarışacağımız kategorileri keşfedin ve işlerinizi ekleyin</p>
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num" id="total-sections">—</div><div class="stat-label">Ana Başlık</div></div>
+    <div class="stat"><div class="stat-num" id="total-cats">—</div><div class="stat-label">Kategori</div></div>
+    <div class="stat"><div class="stat-num" id="total-works">0</div><div class="stat-label">Eklenen İş</div></div>
+  </div>
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Kategori ara... (örn: film, dijital, sosyal medya)">
+  </div>
+</header>
+
+<div class="container">
+  <div class="section-grid" id="sectionGrid"></div>
+  <div class="no-results hidden" id="noResults">Arama sonucu bulunamadı.</div>
+</div>
+
+<script>
+const sections = [
+  {
+    id: "BE", title: "Brand Experience", subtitle: "Marka Deneyiminde Mükemmellik",
+    icon: "✦", color: { icon: "rgba(139,92,246,0.15)", border: "rgba(139,92,246,0.3)", code: "rgba(139,92,246,0.12)", codeText: "#a78bfa", badge: "rgba(139,92,246,0.12)", badgeText: "#c4b5fd", dot: "#8b5cf6" },
+    subsections: [
+      { title: "Marka Deneyimi", cats: [
+        { code: "BE01", name: "Lansman / Re-lansman", desc: "İlk kez tüketicilerin karşısına çıkan/pazara giriş yapan veya kimlik değiştirerek/yenilenerek pazara yeniden sunulan markalar için hayata geçirilen marka deneyimi ve aktivasyon tasarımı çalışmaları." },
+        { code: "BE02", name: "Canlı Marka Deneyimleri ve Aktivasyonlar", desc: "Hedef kitlenin fiziksel olarak içinde bulunduğu etkinlik veya ortamlarda yaratılan canlı deneyim ortamıyla B2B ve B2C uygulamaları." },
+        { code: "BE03", name: "360° Entegre Marka Deneyimi Kampanyası", desc: "Çevrimiçi ve çevrimdışı çok kanallı marka deneyimleri." },
+        { code: "BE04", name: "Gerilla Pazarlama", desc: "Alışılmışın dışında taktiklerle beklenmeyen yerlerde yürütülen pazarlama çalışmaları." },
+        { code: "BE05", name: "Marka İşbirlikleri ve Sponsorluklar", desc: "Sponsorluk, ortaklık vb. marka işbirlikleri üzerine kurulu kampanyalar." },
+      ]},
+      { title: "Teknoloji", cats: [
+        { code: "BE06", name: "Teknoloji Odaklı Marka Deneyimi", desc: "AR, VR, XR, ses aktivasyonu ya da inovatif mobil teknolojilerle marka deneyimi." },
+        { code: "BE07", name: "Markalı Oyunlar ve Yarışmalar", desc: "Konsol, çevrimiçi, mobil oyunlar ve uygulamaları dahil markalı oyun deneyimleri." },
+        { code: "BE08", name: "Sosyal ve Dijital Platformların Kullanımı", desc: "Canlı veya gerçek zamanlı marka deneyimini artırmak için sosyal medya platformlarını kullanan çalışmalar." },
+      ]},
+      { title: "Mağaza Deneyimi", cats: [
+        { code: "BE09", name: "Mağaza İçi Deneyim", desc: "Mağaza içi geçici kurulumlar, ürün sergileme aktiviteleri, pop-up store'lar, ürün tanıtımları." },
+        { code: "BE10", name: "Dijital Mağaza Deneyimi", desc: "Web sitesi, mikro siteler, dijital enstalasyonlar, dijital paneller." },
+        { code: "BE11", name: "Sadakat Programı Çalışmaları", isNew: true, desc: "Mevcut hedef kitleyle ilişkiyi sürdürmek, bağlılığı artırmak adına yapılan sadakat programları." },
+        { code: "BE12", name: "Promosyon Kampanyaları", isNew: true, desc: "Markanın ulaşmak istediği hedef doğrultusunda hayata geçirilen taktiksel iletişimi odağına alan promosyon kampanyaları." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "BE13", name: "Amaç Odaklı Sosyal Sorumluluk Deneyimleri", desc: "Marka amacını yaygınlaştırmak için sosyal, etik ve çevresel konularda fayda sağlayan çalışmalar." },
+        { code: "BE14", name: "Düşük Bütçe Büyük Etki", desc: "Limitli bütçe ile ses getiren, etki yaratan projeler." },
+        { code: "BE15", name: "Felis Global — Brand Experience", desc: "Türkiye dışı coğrafyalarda yayınlanması için üretilen veya Türkiye'de başlayıp diğer ülkelerde kullanılan çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "CR", title: "Craft Felis", subtitle: "Metin, Film ve Müzik",
+    icon: "◈", color: { icon: "rgba(236,72,153,0.12)", border: "rgba(236,72,153,0.25)", code: "rgba(236,72,153,0.1)", codeText: "#f472b6", badge: "rgba(236,72,153,0.1)", badgeText: "#f9a8d4", dot: "#ec4899" },
+    subsections: [
+      { title: "Metin", cats: [
+        { code: "CR01", name: "Film Metni", desc: "Geleneksel ve dijital mecralarda hayata geçmiş film/video çalışmalarındaki yaratıcı metinler." },
+        { code: "CR02", name: "İlan Metni", desc: "Geleneksel ve dijital mecralarda hayata geçmiş ilan çalışmalarındaki yaratıcı metinler." },
+        { code: "CR03", name: "Radyo Metni", desc: "Karasal ve dijital yayın yapan radyo kanallarında yayınlanmış spotlardaki metinler." },
+      ]},
+      { title: "Film (Sadece Prodüksiyon Şirketleri)", cats: [
+        { code: "CR04", name: "Yönetmen", desc: "Yönetmenin yazılı senaryoyu görsel ve işitsel anlatıma dönüştürme becerisi." },
+        { code: "CR05", name: "Prodüksiyon Tasarımı", desc: "Yaratıcı fikrin prodüksiyon süreci boyunca şekillendirilmesi." },
+        { code: "CR06", name: "Sanat Yönetimi", desc: "Mekân seçimi, set tasarımı, dekor, kostüm, renk paleti gibi unsurların bütünlüğü." },
+        { code: "CR07", name: "Ses Tasarımı", desc: "Reklam filminde ses ögelerinin yaratıcı, etkili ve anlatıyı destekleyici kullanımı." },
+        { code: "CR08", name: "Dış Ses", desc: "Seslendirme sanatçısının vurgulaması, tonlaması ve teatral becerisi." },
+        { code: "CR09", name: "Görüntü Yönetmeni", desc: "Sahne kompozisyonu, set ışıklandırması, kamera açısı ve özel efekt kullanımı." },
+        { code: "CR10", name: "Animasyon & Görsel Efekt", desc: "El çizimi, CGI, 2D/3D animasyonlar, minyatür setler ya da stop-motion tekniklerle üretilmiş çalışmalar." },
+        { code: "CR11", name: "Kadın Oyuncu", desc: "Reklam filminde rol almış kadın oyuncunun performansı." },
+        { code: "CR12", name: "Erkek Oyuncu", desc: "Reklam filminde rol almış erkek oyuncunun performansı." },
+        { code: "CR13", name: "Kurgu", isNew: true, desc: "Tempo, ritim, sahne geçişleri, görsel tutarlılık ve anlatı bütünlüğünün sağlandığı yaratıcı süreç." },
+      ]},
+      { title: "Müzik", cats: [
+        { code: "CR14", name: "Jingle / Orijinal", desc: "Bir reklam ya da kampanya için özel olarak bestelenmiş reklam müziği veya markalı şarkı." },
+        { code: "CR15", name: "Jingle / Edit", desc: "Mevcut lisanslı müziklerin marka iletişimine uygun remiks, remaster ya da yeniden kaydedilmiş halleri." },
+      ]},
+    ]
+  },
+  {
+    id: "CC", title: "Creative Commerce", subtitle: "Ticari Yaratıcılık",
+    icon: "◉", color: { icon: "rgba(20,184,166,0.12)", border: "rgba(20,184,166,0.25)", code: "rgba(20,184,166,0.1)", codeText: "#2dd4bf", badge: "rgba(20,184,166,0.1)", badgeText: "#5eead4", dot: "#14b8a6" },
+    subsections: [
+      { title: "Nerede", cats: [
+        { code: "CC01", name: "Sosyal Medya / Influencer Commerce", desc: "Sosyal medya platformlarını veya influencerları kullanarak marka etkileşimine yeni soluk getiren işler." },
+        { code: "CC02", name: "Mobil Commerce", desc: "Mobil ticaret çözümleriyle müşteri deneyiminin optimizasyonunda ticari katkı sağlayan yaratıcı işler." },
+        { code: "CC03", name: "Çok Kanallı (OmniChannel) Commerce", desc: "Birden çok dijital ve fiziksel kanalı etkin kullanarak benzersiz müşteri deneyimi yaratan ticari işler." },
+      ]},
+      { title: "Nasıl?", cats: [
+        { code: "CC04", name: "Hedefleme, Insight Kullanımı ve Kişiselleştirme", desc: "Kullanıcının alışveriş deneyimini zenginleştiren dinamik içerikler." },
+        { code: "CC05", name: "Mesajlaşma", desc: "Mesaj servislerini, chatbotları, sesli asistanları kullanarak online alışveriş deneyimini geliştiren işler." },
+        { code: "CC06", name: "Mağaza İçi Deneyimler", desc: "Mağaza içi promosyonlar, pop-up dükkanlar ve sampling projeleri." },
+        { code: "CC07", name: "Müşteri Edinme ve Tutundurma", desc: "Sadakat programları, sosyal medya işbirlikleri, appler, promosyon kodları, yarışmalar." },
+        { code: "CC08", name: "Metaverse, NFT, Yeni Gerçeklikler ve Gelişen Teknolojiler", desc: "AR, VR, AI, Web3, oyun, sanal dünyalar, NFT, blockchain çözümleri." },
+        { code: "CC09", name: "Marka Stratejisi", desc: "Marka problemlerine yenilikçi stratejik çözümlerle etkileyici ticari sonuçlar yaratan işler." },
+      ]},
+      { title: "Hangi Deneyim", cats: [
+        { code: "CC10", name: "Bütünsel Deneyim Tasarımı", desc: "İlk farkındalıktan satış sonrasına kadar tüm müşteri deneyimini kucaklayan UX, UI çalışmaları." },
+        { code: "CC11", name: "E-ticaret Web Siteleri / Appler", desc: "Pürüzsüz kullanım deneyimi ve fonksiyonellik ile benzersiz B2B veya B2C e-ticaret siteleri." },
+        { code: "CC12", name: "Ödeme Çözümleri", desc: "Blockchain, kripto para, NFT, mobil cüzdanlar, sadakat otomasyonları gibi ödeme çözümleri." },
+      ]},
+      { title: "Neden?", cats: [
+        { code: "CC13", name: "Challenger Marka", desc: "Rekabet baskısına rağmen oyunbozan fikirlerle kendi kategorisini değiştiren markalar." },
+        { code: "CC14", name: "Sosyal Davranış ve İçgörü", desc: "Yaşam tarzı, değer, sosyal davranış veya kültürel içgörülerden beslenen yenilikçi ticaret fikirleri." },
+        { code: "CC15", name: "Bütçemiz Yok", desc: "Düşük bütçelerin yaratıcı kullanımı ile büyük etki yaratan çözümler." },
+        { code: "CC16", name: "Anlamlı Markalar", desc: "Marka anlamının sosyal, çevresel, etik konulardaki anlamlı etkilerini ticari değerlerle ispatlayan markalar." },
+        { code: "CC17", name: "Pazar Üstü", desc: "Pazarın ezberini bozan stratejilerle markasını yeni şekillerde tüketicileriyle buluşturan işler." },
+      ]},
+    ]
+  },
+  {
+    id: "DA", title: "Data & AI Felis", subtitle: "Veri ve Yapay Zeka",
+    icon: "⬡", color: { icon: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.25)", code: "rgba(59,130,246,0.1)", codeText: "#60a5fa", badge: "rgba(59,130,246,0.1)", badgeText: "#93c5fd", dot: "#3b82f6" },
+    subsections: [
+      { title: "Veri", cats: [
+        { code: "DA01", name: "Verinin İçgörüye Dönüştürülmesi", desc: "Veriyi anlamlandırarak içgörüye dönüştüren ve bunu kampanyanın merkezine oturtan projeler." },
+        { code: "DA02", name: "Veri Toplamada Yaratıcılık", desc: "Daha önce var olmayan bir veriyi marka adına üretme gücüne sahip kampanyalar." },
+        { code: "DA03", name: "Veriden Çıkan Ürün / Hizmet / Deneyim", desc: "Güçlü bir içgörüden yola çıkılarak geliştirilen ürün, hizmet, deneyim veya start-up projeleri." },
+        { code: "DA04", name: "Veri Çıkışlı Hedefleme", desc: "Güçlü hedef kitle içgörüsü ortaya çıkaran ya da etkili programatik hedefleme gerçekleştiren projeler." },
+        { code: "DA05", name: "Gerçek Zamanlı Veri Kullanımı", isNew: true, desc: "Gerçek zamanlı olarak oluşturulan veya kullanılan veriyle yaratıcı çözümü doğrudan ilişkilendiren projeler." },
+      ]},
+      { title: "Yapay Zeka", cats: [
+        { code: "DA06", name: "Gerçek Zamanlı Yapay Zeka Kullanımı", isNew: true, desc: "Gerçek zamanlı yapay zeka kullanımıyla yaratıcı çıktı arasındaki duyarlı ilişkiyi açıkça gösteren çalışmalar." },
+        { code: "DA07", name: "Veriden Doğan Yaratıcılık", desc: "Var olan verinin yaratıcı fikrin özünü oluşturduğu projeler." },
+        { code: "DA08", name: "Veri Görselleştirme", desc: "İnfografikler, videolar, dashboardlar gibi araçlarla veriyi anlaşılır hale getiren projeler." },
+        { code: "DA09", name: "Veri Hikayeleştirme", desc: "Verinin yaratıcı kullanımıyla güçlü bir marka anlatısı oluşturan çalışmalar." },
+        { code: "DA10", name: "Üretken Yapay Zeka Tabanlı Yaratıcı Projeler", desc: "Görsel, müzik, metin, 3D, video, animasyon gibi alanlarda üretken yapay zekanın yaratıcı kullanımı." },
+        { code: "DA11", name: "Yapay Zeka Destekli Yaratıcı İçerik", desc: "Yapay zeka teknolojileri desteğiyle üretilen yaratıcı içerikler." },
+        { code: "DA12", name: "Yapay Zeka ile Gelişmiş Müşteri Etkileşimi", desc: "Sohbet robotları, sanal asistanlar veya AR uygulamaları aracılığıyla müşteri etkileşimini geliştiren AI uygulamaları." },
+        { code: "DA13", name: "Yapay Zeka Destekli Kişiselleştirme", desc: "Kişiselleştirilmiş içerik, reklam veya deneyimler sunmada yapay zekayı etkin kullanan çalışmalar." },
+        { code: "DA14", name: "Yapay Zeka ile Akıllı İş Süreçleri", desc: "Yapay zeka desteğiyle iş süreçlerini otomatize eden veya optimize eden çalışmalar." },
+        { code: "DA15", name: "Mizah Kullanımı", isNew: true, desc: "Veri ve yapay zekaya dayalı biçimde mizahı kullanarak oluşturulan proje, kampanya ve içerikler." },
+        { code: "DA16", name: "Felis Global — Data & AI", desc: "Türkiye dışı coğrafyalarda üretilen yaratıcı çalışmalar, kampanyalar, stratejiler ve projeler." },
+      ]},
+    ]
+  },
+  {
+    id: "DE", title: "Design Felis", subtitle: "Tasarım",
+    icon: "◇", color: { icon: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.25)", code: "rgba(245,158,11,0.1)", codeText: "#fbbf24", badge: "rgba(245,158,11,0.1)", badgeText: "#fde68a", dot: "#f59e0b" },
+    subsections: [
+      { title: "Tasarım Kategorileri", cats: [
+        { code: "DE01", name: "Logo Tasarımı", desc: "Bir marka, kurum veya etkinlik için tasarlanmış logo tasarımları." },
+        { code: "DE02", name: "Markalaştırma Tasarımı", desc: "Yeni kurulan bir marka için tasarlanmış veya güncellenen görsel kimlik tasarımları." },
+        { code: "DE03", name: "Kampanya Tasarımı", desc: "Bir etkinlik için tasarlanmış kimliğin çeşitli iletişim mecralarındaki tasarım örgüsü." },
+        { code: "DE04", name: "Tipografi", desc: "Yazı karakterlerinin estetik, fonksiyonel ve iletişimsel yönleriyle kullanıldığı işler." },
+        { code: "DE05", name: "Font Tasarımı", desc: "Markaya/projeye özel tasarlanmış font veya font ailesi." },
+        { code: "DE06", name: "Poster Tasarımı", desc: "Standart poster ölçeklerinde (50x70 ve 70x100) tasarlanan offline poster çalışmaları." },
+        { code: "DE07", name: "Poster Tasarımı (Seri)", desc: "Birden fazla sayıda, seri olarak tasarlanmış poster çalışmaları." },
+        { code: "DE08", name: "Ambalaj Tasarımı", desc: "Ürün kimliği yaratımı, marka deneyimini geliştiren yenilikçi ambalaj tasarımları." },
+        { code: "DE09", name: "Yayın Tasarımı", desc: "Kitap, dergi, katalog, faaliyet raporu, broşür gibi basılı yayınlar." },
+        { code: "DE10", name: "Kapak Tasarımı", desc: "Dergi, kitap gibi yayınların kapakları için hazırlanmış tasarımlar." },
+        { code: "DE11", name: "İllüstrasyon", desc: "Dijital, konvansiyonel ya da hibrit çalışmalardaki illüstrasyonlar." },
+        { code: "DE12", name: "Tasarımda Metin Kullanımı", desc: "Metnin tasarımın özgünlüğünü sağladığı, görsel kimliğin parçası olan yaratıcı metin çalışmaları." },
+        { code: "DE13", name: "Fotoğraf", desc: "Dijital ya da konvansiyonel mecralarda kullanılan fotoğraflar." },
+        { code: "DE14", name: "Fotoğraf (Seri)", desc: "Seri olarak tasarlanmış fotoğraf çalışmaları." },
+        { code: "DE15", name: "Dijital Arayüz Tasarımı (UI-UX)", desc: "Dijital ürünün kullanımı için hazırlanan arayüz tasarımı." },
+        { code: "DE16", name: "Veri Görselleştirme", desc: "Bilginin tamamen grafik anlatılara dönüştürüldüğü detaylı infografik çalışmaları." },
+        { code: "DE17", name: "Ürün Tasarımı", desc: "Form, işlev, kullanılabilirlik ve estetik yoluyla marka değerini artıran tasarım." },
+        { code: "DE18", name: "Animasyon", desc: "Animasyon teknikleri ile hayata geçirilmiş çalışmaların editoryal ve kurgusal tasarımı." },
+        { code: "DE19", name: "Karakter Tasarımı", desc: "Markanın iletişiminde rol oynaması için yaratılmış karakter tasarımı." },
+        { code: "DE20", name: "Hareketli Görüntü Tasarımı", desc: "Grafik, tipografi, illüstrasyon, renk ve sesin zaman ve hareket üzerinden tasarlandığı projeler." },
+        { code: "DE21", name: "Deneyim Tasarımı", desc: "Marka hikayesinin kişisel deneyime dönüştüğü organizasyonların fiziksel mekandaki görsel iletişim tasarımları." },
+        { code: "DE22", name: "Felis Global — Design", desc: "Türkiye dışı coğrafyalarda üretilen tasarım çalışmaları." },
+      ]},
+    ]
+  },
+  {
+    id: "DM", title: "Digital & Mobile Felis", subtitle: "Dijital ve Mobil",
+    icon: "⬢", color: { icon: "rgba(34,197,94,0.12)", border: "rgba(34,197,94,0.25)", code: "rgba(34,197,94,0.1)", codeText: "#4ade80", badge: "rgba(34,197,94,0.1)", badgeText: "#86efac", dot: "#22c55e" },
+    subsections: [
+      { title: "Sektörel Kategoriler", cats: [
+        { code: "DM01", name: "Gıda", desc: "Her türlü gıda ürün gruplarında yer alan markaların iletişimi için hayata geçirilmiş dijital/mobil işler." },
+        { code: "DM02", name: "Kişisel Bakım, Güzellik ve Ev Bakımı", desc: "FMCG ürünleri, kişisel bakım ve güzellik, ev bakımı alanlarında dijital/mobil işler." },
+        { code: "DM03", name: "Dayanıklı Tüketim ve Elektronik", desc: "Beyaz eşya ve elektronik cihazlar alanlarında faaliyet gösteren markaların dijital/mobil işleri." },
+        { code: "DM04", name: "Sağlık ve Wellness", desc: "Sağlıklı yaşam ve medikal yetkinliklerin gelişmesi amacına yönelik dijital/mobil işler." },
+        { code: "DM05", name: "Medya, Eğlence & Kültür-Sanat", desc: "Seyahat, konaklama, canlı etkinlikler, sinema, yayıncılık gibi alanlarda dijital/mobil işler." },
+        { code: "DM06", name: "Otomotiv ve Otomotiv Ürünleri / Hizmetleri", desc: "Her türlü motorlu taşıt ve otomotiv sektörüne ilişkin dijital/mobil işler." },
+        { code: "DM07", name: "Finans", desc: "Bankacılık, fintech, ödeme sistemleri, sigorta gibi finans sektöründe dijital/mobil işler." },
+        { code: "DM08", name: "Perakende", desc: "Online ve offline perakende mağazacılığı ile e-ticaret kanallarında dijital/mobil işler." },
+        { code: "DM09", name: "İletişim Teknolojileri ve Tüketici Servisleri", desc: "Telekomünikasyon, B2C ve B2B teknolojileri, lojistik alanında dijital/mobil işler." },
+        { code: "DM10", name: "Yapı, Yapı Malzemeleri ve Dekorasyon", desc: "Gayrimenkul, yapı ürünleri, mobilya alanlarında dijital/mobil işler." },
+        { code: "DM11", name: "Diğer", desc: "Yukarıdaki sektörel kategorilerin hiçbirine giremeyen ürün ve markaların dijital/mobil işleri." },
+      ]},
+      { title: "Özel Kategoriler", cats: [
+        { code: "DM12", name: "Çapraz Platform Dijital İçerik", isNew: true, desc: "Desktop, rich media, mobil uygulamalar, giyilebilir teknoloji, açıkhava CGI gibi farklı içerikler." },
+        { code: "DM13", name: "Gerçek Zamanlı İçerik", isNew: true, desc: "Markaların gerçek zamanlı etkinliklere anlamlı cevaplar vermek için hazırladığı yaratıcı içerikler." },
+        { code: "DM14", name: "Kişiselleştirilmiş Hikaye Anlatımı ve Deneyimi", isNew: true, desc: "Dinamik, sezgisel, hedefli ve kişisel dijital deneyimler." },
+        { code: "DM15", name: "Web Sitesi", desc: "Marka ve kurumsal, alt markalar, ürün, servis ve kampanyalar için web site çalışmaları." },
+        { code: "DM16", name: "Platformun Yaratıcı Kullanımı", desc: "Bir dijital platform veya kanalın biçimine uygun olarak tasarlanmış özgün reklam uygulamaları." },
+        { code: "DM17", name: "Uzun Format İçerik", desc: "YouTube, IGTV, OTT gibi platformlarda yayınlanmak üzere hazırlanmış markalı içerikler." },
+        { code: "DM18", name: "Topluluk Yaratma / Yönetimi", desc: "Dijital kanallarda takipçi, hayran, elçi topluluklarını yönetmek ve marka-topluluk bağı kurmak." },
+        { code: "DM19", name: "Ufuk Açan Dijital Fikirler", desc: "Dijital kanallarda yaratıcı ve yenilikçi bir yol deneyen öncü çalışmalar." },
+        { code: "DM20", name: "Mobil Uygulama", desc: "Mobil işletim sistemleri için hazırlanmış pazarlama veya kullanıcı bağlantısı amaçlı uygulamalar." },
+        { code: "DM21", name: "Teknolojinin Yenilikçi Kullanımı", desc: "Yapay zeka, AR, VR, otomasyon teknolojilerini kullanıcı deneyimini iyileştirmek için kullanan dijital çalışmalar." },
+      ]},
+      { title: "Kampanya Kategorileri", cats: [
+        { code: "DM22", name: "Holistik Dijital Kampanya", desc: "Çoklu dijital platform/teknolojinin kullanıldığı holistik dijital kampanyalar." },
+        { code: "DM23", name: "Özel Gün Odaklı Dijital Kampanyalar", desc: "Çoklu dijital platformun kullanıldığı özel gün odaklı bütünleşik dijital kampanyalar." },
+        { code: "DM24", name: "Performans Pazarlama Kampanyası", desc: "Yaratıcı bir fikre sahip performans odaklı dijital kampanyalar." },
+      ]},
+      { title: "Craft Kategorileri", cats: [
+        { code: "DM25", name: "Kullanıcı Deneyimi Tasarımı (UX) / Arayüz (UI)", desc: "Dijital ortam için deneyimsel, kullanıcı dostu ve verimli tasarım uygulamaları." },
+        { code: "DM26", name: "Müzik / Ses Tasarımı", desc: "Dijital mecralarda hayata geçmek üzere hazırlanmış müzik/ses tasarımı uygulamaları." },
+        { code: "DM27", name: "Görsel Tasarım", desc: "Dijital mecralarda mecraya özel olarak hazırlanmış görsel tasarım uygulamaları." },
+        { code: "DM28", name: "Hareketlendirme ve Animasyon Tasarımı", desc: "Dijital mecralarda mecraya özel hareketlendirme ve animasyon tasarımı uygulamaları." },
+        { code: "DM29", name: "Metin Yazımı", desc: "Dijital mecralarda mecraya özel hazırlanmış metin içerikleri." },
+        { code: "DM30", name: "AI Storytelling", desc: "Kampanya/fikrin hayata geçmesinde yapay zekanın yaratıcı kullanımı." },
+        { code: "DM31", name: "Felis Global — Digital & Mobile", desc: "Türkiye dışı coğrafyalarda üretilen dijital/mobil çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "EN", title: "Entertainment Felis", subtitle: "Markalı İçerik ve Eğlence",
+    icon: "▣", color: { icon: "rgba(168,85,247,0.12)", border: "rgba(168,85,247,0.25)", code: "rgba(168,85,247,0.1)", codeText: "#c084fc", badge: "rgba(168,85,247,0.1)", badgeText: "#e879f9", dot: "#a855f7" },
+    subsections: [
+      { title: "Kullanım ve Entegrasyon", cats: [
+        { code: "EN01", name: "Markalı Film İçeriği (Uzun Metraj ve Yatay)", desc: "10 dakikadan uzun süreli yatay formatlı orijinal markalı filmler." },
+        { code: "EN02", name: "Markalı Film İçeriği (Kısa Metraj ve Yatay)", desc: "10 dakikadan kısa süreli yatay formatlı orijinal markalı filmler." },
+        { code: "EN03", name: "Markalı Film İçeriği (Dikey Formatlar)", desc: "Dikey ekranlarda yayınlanmak üzere tasarlanmış markalı filmler." },
+        { code: "EN04", name: "Senaryolu Ekran İçeriği Entegrasyonu", desc: "Senaryolu dizilere ve filmlere uygulanmış markalı içerik entegrasyonları." },
+        { code: "EN05", name: "Senaryosuz Ekran İçeriği Entegrasyonu", desc: "Belgesel, reality show, yarışma gibi senaryosuz prodüksiyonlara markalı içerik entegrasyonu." },
+        { code: "EN06", name: "En İyi Aktif Entegrasyon", desc: "Ürünün yalnızca kullanımının göründüğü entegrasyon çalışmaları." },
+        { code: "EN07", name: "Advertorial", desc: "Televizyonda yayınlanmak üzere hazırlanan yaratıcı advertorial uygulamaları." },
+        { code: "EN08", name: "Markalı İçerik — Video Dışında Kalan Türler", desc: "Online reklamlar, sponsorlu içerikler, ürün yerleştirme gibi video dışı markalı içerik projeleri." },
+        { code: "EN09", name: "Canlı Yayın", desc: "Televizyon veya online mecralarda gerçekleştirilen canlı yayınlardaki markalı içerik entegrasyonları." },
+        { code: "EN10", name: "En İyi Senaryo — Müzik Eşleşmesi", desc: "İçerikle en doğru şekilde entegre olmuş markalı müzik veya şarkı çalışmaları." },
+        { code: "EN11", name: "Basılı İçerik Kullanımı ya da Entegrasyonu", desc: "Kitap, gazete, dergi ve matbu mecralar için hayata geçirilen markalı içerikler." },
+        { code: "EN12", name: "Dijital veya Sosyal Medyanın Kullanımı ya da Entegrasyonu", desc: "Markalı sosyal medya, site, mobil aplikasyon, native reklam gibi içeriklerin yaratıcı kullanımı." },
+        { code: "EN13", name: "İşitsel Medya", desc: "Radyo, dijital radyo ya da online audio streaming platformlardaki markalı içerikler." },
+        { code: "EN14", name: "Kullanıcının Yarattığı İçeriğin Kullanımı", desc: "Sosyal platformlarda markanın yarattığı içerik veya teknolojinin kullanıcılar tarafından çeşitlendirilmesi." },
+        { code: "EN15", name: "Markalı İçerik Partnerliği", desc: "Aynı içerikte farklı zamanlarda en az üç farklı uygulamanın yapıldığı entegrasyon çalışmaları." },
+      ]},
+      { title: "Ünlü ve Influencer", cats: [
+        { code: "EN16", name: "TV ve Dijital Platformlarda Ünlü/Influencer Entegrasyonu", desc: "Televizyon ve/veya dijital platformlar için yapılan ünlü veya influencer entegrasyonları." },
+        { code: "EN17", name: "Sosyal Medyada Ünlü/Influencer Entegrasyonu", desc: "Sosyal platformlarda marka mesajını iletmek için yapılan ünlü veya influencer entegrasyonları." },
+        { code: "EN18", name: "Canlı Deneyimde Ünlü/Influencer Entegrasyonu", desc: "Gösteriler, festivaller, flash moblar gibi canlı etkinliklerde gerçekleştirilen ünlü veya influencer işbirlikleri." },
+        { code: "EN19", name: "Diğer Mecralarda Ünlü/Influencer Entegrasyonu", desc: "Sinema, radyo, basılı mecralar gibi diğer mecralarda ünlü veya influencer entegrasyonu." },
+      ]},
+      { title: "Oyun", cats: [
+        { code: "EN20", name: "Markalı Oyun", desc: "Marka adına üretilmiş online/mobil oyunlar ya da marka etkileşim oyunları." },
+        { code: "EN21", name: "Dijital Oyunlara Ürün / Marka Yerleştirme", desc: "Halihazırda var olan bir oyuna markanın mesajını iletmek için yapılan entegrasyonlar." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "EN22", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu markalı içerik çalışmaları." },
+        { code: "EN23", name: "Markalı İçerik Kampanyası", desc: "En az üç farklı versiyonu olan veya üç farklı mecrada entegre üretilmiş içerikler üzerinden yürütülen kampanyalar." },
+        { code: "EN24", name: "Paradigma Değiştiren Markalı İçerik Uygulamaları", desc: "Daha önce kullanılmamış bir alanı markalı içerikle mecra haline getiren çalışmalar." },
+        { code: "EN25", name: "Felis Global — Entertainment", desc: "Türkiye dışı coğrafyalarda üretilen veya Türkiye'de başlayıp diğer ülkelerde kullanılan çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "FL", title: "Film Felis", subtitle: "Reklam Filmleri",
+    icon: "▶", color: { icon: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.25)", code: "rgba(239,68,68,0.1)", codeText: "#f87171", badge: "rgba(239,68,68,0.1)", badgeText: "#fca5a5", dot: "#ef4444" },
+    subsections: [
+      { title: "Sektörel", cats: [
+        { code: "FL01", name: "Gıda", desc: "Her türlü gıda ürün gruplarında hayata geçirilmiş reklam filmleri." },
+        { code: "FL02", name: "Kişisel Bakım, Güzellik ve Ev Bakımı", desc: "FMCG, kişisel bakım ve güzellik, ev bakımı alanlarında reklam filmleri." },
+        { code: "FL03", name: "Dayanıklı Tüketim ve Elektronik", desc: "Beyaz eşya ve elektronik cihazlar alanlarında reklam filmleri." },
+        { code: "FL04", name: "Sağlık ve Wellness", desc: "Sağlıklı yaşam ve medikal yetkinlik amaçlı reklam filmleri." },
+        { code: "FL05", name: "Medya, Eğlence & Kültür-Sanat", desc: "Seyahat, eğlence, sinema, yayıncılık gibi alanlarda reklam filmleri." },
+        { code: "FL06", name: "Otomotiv ve Otomotiv Ürünleri / Hizmetleri", desc: "Otomotiv sektöründe hizmet veren markalar için reklam filmleri." },
+        { code: "FL07", name: "Finans", desc: "Bankacılık, fintech, sigorta gibi finans sektöründe reklam filmleri." },
+        { code: "FL08", name: "Perakende", desc: "Perakende mağazacılığı ve e-ticaret kanalları için reklam filmleri." },
+        { code: "FL09", name: "İletişim Teknolojileri ve Tüketici Servisleri", desc: "Telekomünikasyon ve B2C/B2B teknolojilerinde reklam filmleri." },
+        { code: "FL10", name: "Yapı, Yapı Malzemeleri ve Dekorasyon", desc: "Gayrimenkul, yapı ürünleri, mobilya alanlarında reklam filmleri." },
+        { code: "FL11", name: "Diğer", desc: "Yukarıdaki kategorilerin hiçbirine giremeyen markaların reklam filmleri." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "FL12", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu reklam filmleri." },
+        { code: "FL13", name: "Kurumsal İmaj", desc: "Şirket ya da markanın imajına yönelik reklam filmleri." },
+        { code: "FL14", name: "Özel Günler", desc: "Özel gün ve hafta kutlama mesajları içeren reklam filmleri." },
+        { code: "FL15", name: "Toplumsal Sorumluluk", desc: "Kamu hizmeti işlevi taşıyan, sosyal konularda sorunlara çözüm arayan reklam filmleri." },
+        { code: "FL16", name: "Kampanya", desc: "Aynı projeye ait birbirinden farklı en az iki versiyonu olan reklam filmi kampanyaları." },
+        { code: "FL17", name: "Felis Global — Film", desc: "Türkiye dışı coğrafyalarda üretilen yaratıcı çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "HW", title: "HealthCare & Wellness Felis", subtitle: "Sağlık ve Wellness",
+    icon: "♡", color: { icon: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)", code: "rgba(16,185,129,0.1)", codeText: "#34d399", badge: "rgba(16,185,129,0.1)", badgeText: "#6ee7b7", dot: "#10b981" },
+    subsections: [
+      { title: "Sağlık Profesyonelleri İletişimi", cats: [
+        { code: "HW01", name: "Ürün İnovasyon İletişimi", desc: "Sağlık profesyonellerini hedefleyen yeni ürün ve hizmet inovasyonlarına yönelik yaratıcı iletişim çalışmaları." },
+        { code: "HW02", name: "Eğitim ve Farkındalık", desc: "İnsan ve halk sağlığı, pandemiler konusunda sağlık profesyonelleri için iletişim çalışmaları." },
+        { code: "HW03", name: "Sağlık Teknolojileri", desc: "Sağlık profesyonellerinin ihtiyaçları için hayata geçirilmiş teknoloji temelli sağlık ürün ve hizmetleri." },
+        { code: "HW04", name: "Hedef Kitle Odaklı Medya Kullanımı ve Topluluk Yaratma", desc: "Sağlık profesyonellerini bir mesaj veya amaç etrafında buluşturan yaratıcı iletişim çalışmaları." },
+        { code: "HW05", name: "Medikal Pazarlama Kampanyası", desc: "Sağlık profesyonellerine yönelik ürüne, markaya veya endikasyona katma değer sağlayan kampanyalar." },
+      ]},
+      { title: "Tüketici Sağlığı", cats: [
+        { code: "HW06", name: "Medikal Cihazlar ve Sağlık Ürünleri", desc: "OTC kategorisine giren medikal cihazlar ve sağlık ürünlerine yönelik tüketici odaklı iletişim çalışmaları." },
+        { code: "HW07", name: "Gıda Takviyeleri", desc: "Vitamin, mineral, bitkisel ilaçlar gibi OTC gıda ürünleri için tüketici odaklı sağlık iletişimi." },
+        { code: "HW08", name: "Sağlık ve Wellness Teknolojileri", desc: "Dijital sağlık ürünleri, aplikasyonlar, giyilebilir teknoloji için tüketici odaklı iletişim." },
+        { code: "HW09", name: "Hayvan Sağlığına Yönelik Çalışmalar", desc: "Evcil ve sokak hayvanlarının sağlığını gözeten projeler ve hayırseverlik çalışmaları." },
+        { code: "HW10", name: "Sağlık Hizmetleri ve Sağlığı Destekleyici Tesisler", desc: "Hastaneler, klinikler, fitness tesisleri için tüketici odaklı yaratıcı iletişim çalışmaları." },
+      ]},
+      { title: "Farkındalık ve Kurumsal", cats: [
+        { code: "HW11", name: "Bilinçlendirme ve Farkındalık Kampanyası", desc: "Toplumda sağlıklı yaşam ve belirli hastalıklar konusunda farkındalık yaratan kampanyalar." },
+        { code: "HW12", name: "Kurumsal İmaj ve İletişim", desc: "Sağlık ürünleri, şirketleri, hastaneler için yaratıcı kurumsal imaj ve iletişim çalışmaları." },
+        { code: "HW13", name: "Entegre Sağlık ve Wellness İletişimi Kampanyası", desc: "Tüketiciye ya da sağlık profesyonellerine yönelik 360 derece kurgulanmış çok kanallı kampanyalar." },
+        { code: "HW14", name: "Felis Global — Healthcare & Wellness", desc: "Türkiye dışı coğrafyalarda üretilen sağlık alanında yaratıcı çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "IN", title: "Integrated Felis", subtitle: "Entegre Kampanyalar",
+    icon: "◎", color: { icon: "rgba(251,146,60,0.12)", border: "rgba(251,146,60,0.25)", code: "rgba(251,146,60,0.1)", codeText: "#fb923c", badge: "rgba(251,146,60,0.1)", badgeText: "#fdba74", dot: "#f97316" },
+    subsections: [
+      { title: "Sektörel", cats: [
+        { code: "IN01", name: "Gıda", desc: "Her türlü gıda ürün gruplarında hayata geçirilmiş entegre kampanyalar." },
+        { code: "IN02", name: "Kişisel Bakım, Güzellik ve Ev Bakımı", desc: "FMCG, kişisel bakım ve güzellik alanlarında entegre kampanyalar." },
+        { code: "IN03", name: "Dayanıklı Tüketim ve Elektronik", desc: "Beyaz eşya ve elektronik cihazlar alanlarında entegre kampanyalar." },
+        { code: "IN04", name: "Sağlık ve Wellness", desc: "Sağlıklı yaşam ve medikal yetkinlik için entegre kampanyalar." },
+        { code: "IN05", name: "Medya, Eğlence & Kültür-Sanat", desc: "Seyahat, eğlence, sinema, kültür-sanat alanlarında entegre kampanyalar." },
+        { code: "IN06", name: "Otomotiv ve Otomotiv Ürünleri / Hizmetleri", desc: "Otomotiv sektöründe entegre kampanyalar." },
+        { code: "IN07", name: "Finans", desc: "Bankacılık, fintech, sigorta gibi finans sektöründe entegre kampanyalar." },
+        { code: "IN08", name: "Perakende", desc: "Perakende ve e-ticaret kanalları için entegre kampanyalar." },
+        { code: "IN09", name: "İletişim Teknolojileri ve Tüketici Servisleri", desc: "Telekomünikasyon ve teknoloji şirketleri için entegre kampanyalar." },
+        { code: "IN10", name: "Yapı, Yapı Malzemeleri ve Dekorasyon", desc: "Gayrimenkul ve yapı sektörü için entegre kampanyalar." },
+        { code: "IN11", name: "Diğer", desc: "Yukarıdaki kategorilerin hiçbirine giremeyen markaların entegre kampanyaları." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "IN12", name: "Kurumsal İmaj", desc: "Şirket ya da markanın imajına yönelik entegre kampanyalar." },
+        { code: "IN13", name: "Özel Günler", desc: "Özel gün ve hafta kutlama mesajları içeren entegre kampanyalar." },
+        { code: "IN14", name: "Toplumsal Sorumluluk", desc: "Kamu hizmeti işlevi taşıyan, sosyal konularda çözüm arayan entegre kampanyalar." },
+        { code: "IN15", name: "Felis Global — Integrated", desc: "Türkiye dışı coğrafyalarda üretilen yaratıcı entegre kampanyalar." },
+      ]},
+    ]
+  },
+  {
+    id: "MD", title: "Media Felis", subtitle: "Medya",
+    icon: "◉", color: { icon: "rgba(99,102,241,0.12)", border: "rgba(99,102,241,0.25)", code: "rgba(99,102,241,0.1)", codeText: "#818cf8", badge: "rgba(99,102,241,0.1)", badgeText: "#a5b4fc", dot: "#6366f1" },
+    subsections: [
+      { title: "Mecra / Kanal", cats: [
+        { code: "MD01", name: "Televizyon Kullanımı", desc: "Televizyon mecrası için tanımlanmış reklam alanlarının yaratıcı kullanımı." },
+        { code: "MD02", name: "Diğer Ekranlar Kullanımı", desc: "Dokunmatik ekranlar, dinamik dijital ekranlar, interaktif ekranlar gibi TV dışı ekranlar." },
+        { code: "MD03", name: "Sinema ve Dijital Platform Kullanımı", desc: "Sinema salonları ve dijital platformlardaki markalı işbirlikleri." },
+        { code: "MD04", name: "Basın / Haber Platformu Kullanımı", desc: "Gazete ve dergi mecralarında yaratıcı medya çalışmaları." },
+        { code: "MD05", name: "Sesli Platform Kullanımı", desc: "Radyo, podcast, dijital radyo yayınları için yaratıcı medya çalışmaları." },
+        { code: "MD06", name: "Açıkhava Kullanımı", desc: "Billboardlar, raketler, otobüs durakları ve ulaşım araçları gibi açıkhava reklam alanları." },
+        { code: "MD07", name: "Indoor / In-store Medya Kullanımı", desc: "Mağaza veya AVM gibi mekânların içindeki reklam alanları." },
+        { code: "MD08", name: "Ambient Medya Kullanımı — Küçük Ölçekli", desc: "Ortamda doğal olarak bulunan öğelerin mecra haline getirilmesi (bardaklar, kül tablaları vb.)." },
+        { code: "MD09", name: "Ambient Medya Kullanımı — Büyük Ölçekli", desc: "3D, süper ölçekli yerleşimler, standart olmayan açıkhava kullanımları." },
+        { code: "MD10", name: "Etkinlik Kullanımı", desc: "Marka etrafında düzenlenen özel/gerilla etkinliklerde yaratıcı medya çalışmaları." },
+        { code: "MD11", name: "Sponsorluk Kullanımı", desc: "Marka ve sponsor olunan proje arasındaki değer aktarımını doğru kuran sponsorluk çalışmaları." },
+        { code: "MD12", name: "Mobil Platform Kullanımı", desc: "Akıllı telefonlar, tabletler, SMS, GPS, mobil oyun ve aplikasyonlar aracılığıyla yaratıcı medya." },
+        { code: "MD13", name: "Oyun Platformları Kullanımı", isNew: true, desc: "Video oyunları ve oyun platformları üzerinden gerçekleştirilen yaratıcı medya projeleri." },
+        { code: "MD14", name: "Sosyal Reklam Kullanımı", desc: "Google, Meta, TikTok, Twitter gibi sosyal medya platformlarındaki reklam alanlarının etkili kullanımı." },
+        { code: "MD15", name: "Yaratıcı Influencer Kullanımı", desc: "Hedef kitle üzerinde etki sahibi sosyal medya içerik üreticilerinin etkin medya kullanımı." },
+        { code: "MD16", name: "Arama Motoru Pazarlaması", desc: "Arama motoru optimizasyonu ve ücretli yerleşim yöntemleriyle görünürlük artıran medya çalışmaları." },
+        { code: "MD17", name: "Yenilikçi Teknoloji Uygulaması", desc: "Üçüncü parti reklam teknolojilerinin kullanımıyla ortaya çıkan etkin medya kullanımları." },
+        { code: "MD18", name: "Yeni Teknolojilerin Kullanımı", desc: "AR, VR, AI, blockchain, metaverse gibi farklı teknolojilerle medya sınırlarını yaratıcı zorlayan kampanyalar." },
+      ]},
+      { title: "İçerik", cats: [
+        { code: "MD19", name: "Ürün Yerleştirme", desc: "Pazarlama iletişimini yayın veya performans içeriğine entegre eden markalı medya çalışmaları." },
+        { code: "MD20", name: "İçerik Odaklı Medya Kullanımı", desc: "Ürün entegrasyonu dışında yayın içeriğinden faydalanan markalı medya çalışmaları." },
+      ]},
+      { title: "Sektörel", cats: [
+        { code: "MD21", name: "Gıda", desc: "Gıda markaları için hayata geçirilmiş medya çalışmaları." },
+        { code: "MD22", name: "Kişisel Bakım, Güzellik ve Ev Bakımı", desc: "FMCG ve kişisel bakım alanlarında medya çalışmaları." },
+        { code: "MD23", name: "Dayanıklı Tüketim ve Elektronik", desc: "Beyaz eşya ve elektronik alanlarında medya çalışmaları." },
+        { code: "MD24", name: "Sağlık ve Wellness", desc: "Sağlıklı yaşam odaklı medya çalışmaları." },
+        { code: "MD25", name: "Medya, Eğlence & Kültür-Sanat", desc: "Eğlence ve kültür-sanat alanlarında medya çalışmaları." },
+        { code: "MD26", name: "Otomotiv", desc: "Otomotiv sektörü için medya çalışmaları." },
+        { code: "MD27", name: "Finans", desc: "Finans sektöründe medya çalışmaları." },
+        { code: "MD28", name: "Perakende", desc: "Perakende ve e-ticaret kanalları için medya çalışmaları." },
+        { code: "MD29", name: "İletişim Teknolojileri ve Tüketici Servisleri", desc: "Telekomünikasyon ve teknoloji için medya çalışmaları." },
+        { code: "MD30", name: "Yapı, Yapı Malzemeleri ve Dekorasyon", desc: "Yapı ve dekorasyon sektörü için medya çalışmaları." },
+        { code: "MD31", name: "Diğer", desc: "Diğer sektörlerin medya çalışmaları." },
+      ]},
+      { title: "Hedef Kitle ve Fark Yaratanlar", cats: [
+        { code: "MD32", name: "Hedef Kitleye Erişim", desc: "Tanımlı ve özel bir hedef kitleye erişmek için medya aracını etkili kullanan çalışmalar." },
+        { code: "MD33", name: "Tüketiciyle Bağ Kurma (Consumer Engagement)", desc: "Tüketici ile marka arasında aktif bir bağ kuran medya çalışmaları." },
+        { code: "MD34", name: "Veri ile Kişiselleştirilmiş Medya", isNew: true, desc: "Gerçek zamanlı veri ve yapay zeka destekli sistemlerle kişiselleştirilmiş medya uygulamaları." },
+        { code: "MD35", name: "Medya Planlamada Mükemmellik: Yılın Kampanyası", desc: "İletişim hedeflerine ulaşmak için tercih edilen medya kanallarının ve araçlarının değerlendirilmesi." },
+        { code: "MD36", name: "Paradigma Değiştiren Projeler (Yeni Mecra)", desc: "Daha önce kullanılmamış bir alanı mecra haline getiren medya çalışmaları." },
+        { code: "MD37", name: "Ufak Bütçe Büyük İş", desc: "Mütevazi bütçelerle maksimum etki yaratan yaratıcı medya çalışmaları." },
+        { code: "MD38", name: "Felis Global — Media", desc: "Türkiye dışı coğrafyalarda üretilen yaratıcı medya çalışmaları." },
+      ]},
+    ]
+  },
+  {
+    id: "OOH", title: "Outdoor", subtitle: "Açıkhava",
+    icon: "◆", color: { icon: "rgba(251,191,36,0.12)", border: "rgba(251,191,36,0.25)", code: "rgba(251,191,36,0.1)", codeText: "#fbbf24", badge: "rgba(251,191,36,0.1)", badgeText: "#fde68a", dot: "#f59e0b" },
+    subsections: [
+      { title: "Standart", cats: [
+        { code: "OOH01", name: "Geleneksel Açıkhava Çalışmaları", desc: "Otobüs durağı, metro, billboardlar, raketler, afiş, poster gibi standart açıkhava çalışmaları." },
+        { code: "OOH02", name: "Indoor / In-Store", desc: "İç mekânlarda kullanılmak üzere geliştirilmiş poster, görsel malzeme, stant, reyon çalışmaları." },
+        { code: "OOH03", name: "Büyük Ölçekli Açıkhava Çalışmaları", desc: "Bina, duvar gibi büyük ölçekli yüzeylerde standart, dijital olmayan uygulamalar." },
+        { code: "OOH04", name: "Dijital Açıkhava Çalışmaları", desc: "Her türlü hareketli ve hareketsiz standart dijital açıkhava uygulamaları." },
+        { code: "OOH05", name: "Açıkhava Mecralarıyla Sınırlı Kampanyalar", desc: "Açıkhava kullanımıyla sınırlı, en az üç farklı açıkhava çalışması bulunan kampanyalar." },
+      ]},
+      { title: "Ambient", cats: [
+        { code: "OOH06", name: "Ambient Billboard", desc: "Açıkhavada inovatif, 3D fiziki çalışmalar ve hareketli kullanımlar." },
+        { code: "OOH07", name: "Küçük Ölçekli Ambient", desc: "Ortamda doğal bulunan öğelerin mecra haline getirilmesi (bardaklar, kül tablaları vb.)." },
+        { code: "OOH08", name: "Büyük Ölçekli Ambient", desc: "Büyük ölçekli ortam uygulamaları, bina ve sokakların standart olmayan kullanımları." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "OOH09", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu geleneksel ve ambient açıkhava reklamları." },
+        { code: "OOH10", name: "Felis Global — Outdoor", desc: "Türkiye dışı coğrafyalarda üretilen açıkhava çalışmaları." },
+      ]},
+    ]
+  },
+  {
+    id: "PR", title: "PR Felis", subtitle: "Halkla İlişkiler",
+    icon: "◈", color: { icon: "rgba(244,63,94,0.12)", border: "rgba(244,63,94,0.25)", code: "rgba(244,63,94,0.1)", codeText: "#fb7185", badge: "rgba(244,63,94,0.1)", badgeText: "#fda4af", dot: "#f43f5e" },
+    subsections: [
+      { title: "PR Kategorileri", cats: [
+        { code: "PR01", name: "İç İletişim Yönetimi", desc: "Kurum içinde çalışanlar için veya çalışanlar arası iletişime yönelik PR çalışmaları." },
+        { code: "PR02", name: "İtibar Yönetimi", desc: "Kurum, kuruluş ve markaların paydaşlarına yönelik algı ve itibar yönetimi çalışmaları." },
+        { code: "PR03", name: "Sürdürülebilirlik Yönetimi", desc: "Ekonomik, toplumsal ve çevresel parametreleri dikkate alarak sorunlara çözüm üreten çalışmalar." },
+        { code: "PR04", name: "Kurumsal Sosyal Sorumluluk", desc: "Kurumun topluma ve çevreye katkı sağlamak amacıyla hayata geçirdiği iletişim çalışmaları." },
+        { code: "PR05", name: "Yıldönümü İletişim Projeleri", isNew: true, desc: "Kurum, kuruluş ve markaların yıldönümleri için gerçekleştirdikleri halkla ilişkiler projeleri." },
+        { code: "PR06", name: "Konu İletişimi ve Farkındalık Kampanyaları", desc: "Kamuoyunda farkındalık oluşturmak için gerçekleştirilen PR çalışmaları." },
+        { code: "PR07", name: "Lansman / Re-lansman", desc: "Kurum, marka, ürün veya hizmetin lansman ya da re-lansmanı için oluşturulan PR çalışmaları." },
+        { code: "PR08", name: "İçerik Üretimi", desc: "Dijital ve geleneksel mecralar için özgün içerik üretiminin ve/veya tasarımının yarattığı katma değer." },
+        { code: "PR09", name: "Kanaat Önderleri Aracılığıyla İletişim", desc: "Toplum sözcülerini ve kanaat önderlerini kullanan proje ve girişimlerin marka faydası." },
+        { code: "PR10", name: "Influencer Aracılığıyla İletişim", desc: "Influencerlarla yapılan yaratıcı ve yenilikçi işbirliklerinin marka faydası." },
+        { code: "PR11", name: "WOM İletişimi", desc: "Arkasında iletişim kurgusu anlaşılmadan geniş kitlelerce duyulan PR çalışmaları." },
+        { code: "PR12", name: "Gündem Yönetimi ve İletişimi", desc: "Gündem konularını odağına alan ve yöneten online ve/veya offline PR çalışmaları." },
+        { code: "PR13", name: "Medya İlişkileri Yönetimi", desc: "Medya ilişkilerini kampanyanın merkezine koyan PR çalışmaları." },
+        { code: "PR14", name: "Sosyal Medya ve Dijital Topluluk Yönetimi", desc: "Sosyal medya stratejisini gösteren PR çalışmalarının hedef kitle üzerinde etkisi." },
+        { code: "PR15", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu halkla ilişkiler kampanyaları." },
+        { code: "PR16", name: "Gerçek Zamanlı PR Çalışmaları", desc: "Önemli global veya ulusal olayları gerçek zamanlı olarak odağına alan PR çalışmaları." },
+        { code: "PR17", name: "Kurumsal Raporlar", desc: "Finansal, faaliyet, sürdürülebilirlik ve entegre raporlar." },
+        { code: "PR18", name: "PR Amaçlı Yayınlar", desc: "İtibar ve algıya katkı sağlamak amacıyla hazırlanan online ve/veya offline yayınlar." },
+        { code: "PR19", name: "Bir PR Platformu Olarak Etkinlik Tasarımı ve Yönetimi", desc: "Festival, sergi, konferans, yarışma gibi platformların hedef kitleler üzerindeki etkisi." },
+        { code: "PR20", name: "Sponsorluk Yönetimi", desc: "Marka stratejisi ile uyumlu sponsorluk odaklı PR çalışmaları." },
+        { code: "PR21", name: "PR Faaliyetleriyle Sınırlı Kampanyalar", desc: "Merkezinde PR stratejisi ve uygulamaları olan entegre iletişim kampanyaları." },
+        { code: "PR22", name: "Felis Global — PR", desc: "Türkiye dışı coğrafyalarda üretilen yaratıcı PR çalışmaları." },
+      ]},
+    ]
+  },
+  {
+    id: "PP", title: "Print & Publishing", subtitle: "Basılı ve Dijital Yayınlar",
+    icon: "□", color: { icon: "rgba(156,163,175,0.15)", border: "rgba(156,163,175,0.2)", code: "rgba(156,163,175,0.1)", codeText: "#9ca3af", badge: "rgba(156,163,175,0.1)", badgeText: "#d1d5db", dot: "#6b7280" },
+    subsections: [
+      { title: "Sektörel", cats: [
+        { code: "PP01", name: "Gıda", desc: "Gıda markaları için hazırlanmış basılı ve dijital çalışmalar." },
+        { code: "PP02", name: "Kişisel Bakım, Güzellik ve Ev Bakımı", desc: "FMCG ve kişisel bakım alanlarında basılı ve dijital çalışmalar." },
+        { code: "PP03", name: "Dayanıklı Tüketim ve Elektronik", desc: "Beyaz eşya ve elektronik markalar için basılı ve dijital çalışmalar." },
+        { code: "PP04", name: "Sağlık ve Wellness", desc: "Sağlık ürünleri ve hizmetleri için basılı ve dijital çalışmalar." },
+        { code: "PP05", name: "Medya, Eğlence & Kültür-Sanat", desc: "Eğlence ve kültür-sanat alanlarında basılı ve dijital çalışmalar." },
+        { code: "PP06", name: "Otomotiv", desc: "Otomotiv sektörü için basılı ve dijital çalışmalar." },
+        { code: "PP07", name: "Finans", desc: "Finans sektöründe basılı ve dijital çalışmalar." },
+        { code: "PP08", name: "Perakende", desc: "Perakende ve e-ticaret kanalları için basılı ve dijital çalışmalar." },
+        { code: "PP09", name: "İletişim Teknolojileri ve Tüketici Servisleri", desc: "Telekomünikasyon ve teknoloji için basılı ve dijital çalışmalar." },
+        { code: "PP10", name: "Yapı, Yapı Malzemeleri ve Dekorasyon", desc: "Yapı ve dekorasyon sektörü için basılı ve dijital çalışmalar." },
+        { code: "PP11", name: "Diğer", desc: "Diğer sektörlerin basılı ve dijital çalışmaları." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "PP12", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu basılı ve dijital reklamlar." },
+        { code: "PP13", name: "Kurumsal İmaj", desc: "Şirket ya da markanın imajına yönelik basılı ve dijital çalışmalar." },
+        { code: "PP14", name: "Özel Günler", desc: "Özel gün ve hafta kutlama mesajları içeren basılı ve dijital çalışmalar." },
+        { code: "PP15", name: "İnovatif Basın Kullanımı", desc: "Okurlarla etkileşim yaratan inovatif basın kullanımı (AR, QR kodlar, 3D baskı vb.)." },
+        { code: "PP16", name: "Fiziksel ve Dijital Basın ile Sınırlı Kampanyalar", desc: "En az 2 farklı basın çalışması bulunan kampanyalar." },
+        { code: "PP17", name: "Felis Global — Print & Publishing", desc: "Türkiye dışı coğrafyalarda üretilen basılı/dijital çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "RA", title: "Radio & Audio", subtitle: "Radyo ve Ses",
+    icon: "♪", color: { icon: "rgba(6,182,212,0.12)", border: "rgba(6,182,212,0.25)", code: "rgba(6,182,212,0.1)", codeText: "#22d3ee", badge: "rgba(6,182,212,0.1)", badgeText: "#67e8f9", dot: "#06b6d4" },
+    subsections: [
+      { title: "Sektörel", cats: [
+        { code: "RA01", name: "Gıda", desc: "Gıda markalarının iletişimi için dijital veya analog mecralardaki sesli spotlar." },
+        { code: "RA02", name: "Kişisel Bakım, Güzellik ve Ev Bakımı", desc: "FMCG ve kişisel bakım alanlarında sesli spotlar." },
+        { code: "RA03", name: "Dayanıklı Tüketim ve Elektronik", desc: "Beyaz eşya ve elektronik markalar için sesli spotlar." },
+        { code: "RA04", name: "Sağlık ve Wellness", desc: "Sağlıklı yaşam amaçlı sesli spotlar." },
+        { code: "RA05", name: "Medya, Eğlence & Kültür-Sanat", desc: "Eğlence ve kültür-sanat alanlarında sesli spotlar." },
+        { code: "RA06", name: "Otomotiv", desc: "Otomotiv sektörü için sesli spotlar." },
+        { code: "RA07", name: "Finans", desc: "Finans sektöründe sesli spotlar." },
+        { code: "RA08", name: "Perakende", desc: "Perakende kanalları için sesli spotlar." },
+        { code: "RA09", name: "İletişim Teknolojileri ve Tüketici Servisleri", desc: "Telekomünikasyon ve teknoloji için sesli spotlar." },
+        { code: "RA10", name: "Yapı, Yapı Malzemeleri ve Dekorasyon", desc: "Yapı sektörü için sesli spotlar." },
+        { code: "RA11", name: "Diğer", desc: "Diğer sektörlerin sesli spotları." },
+      ]},
+      { title: "Fark Yaratanlar", cats: [
+        { code: "RA12", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu işitsel reklam spotları." },
+        { code: "RA13", name: "Kurumsal İmaj", desc: "Şirket ya da markanın imajına yönelik sesli spotlar." },
+        { code: "RA14", name: "Özel Günler", desc: "Özel gün ve hafta kutlamaları için sesli spotlar." },
+        { code: "RA15", name: "Kampanya", desc: "Birbirinden farklı en az üç versiyonu olan ses kampanyaları." },
+        { code: "RA16", name: "Markalı İletişim / Podcast", desc: "Dijital ses platformlarında markanın mesajını yaygınlaştıran podcast ve sesli çalışmalar." },
+        { code: "RA17", name: "Radio & Audio'nun Yenilikçi Kullanımı", desc: "Ses teknolojilerinin açtığı yaratıcı fırsatların marka iletişiminde değerlendirilmesi." },
+        { code: "RA18", name: "Felis Global — Radio & Audio", desc: "Türkiye dışı coğrafyalarda üretilen sesli çalışmalar." },
+      ]},
+    ]
+  },
+  {
+    id: "SM", title: "Social Media", subtitle: "Sosyal Medya",
+    icon: "✦", color: { icon: "rgba(124,58,237,0.12)", border: "rgba(124,58,237,0.25)", code: "rgba(124,58,237,0.1)", codeText: "#8b5cf6", badge: "rgba(124,58,237,0.1)", badgeText: "#c4b5fd", dot: "#7c3aed" },
+    subsections: [
+      { title: "Sosyal Medya Kategorileri", cats: [
+        { code: "SM01", name: "Kullanıcının Yarattığı İçerik Odaklı İletişim", desc: "Markanın kullanıcıları içerik yaratmaya teşvik ettiği sosyal medya çalışmaları." },
+        { code: "SM02", name: "Özel Gün Odaklı İletişim Çalışmaları", desc: "Sosyal medyada yayınlanan özel günlere yönelik içerik/kampanya çalışmaları." },
+        { code: "SM03", name: "Gündem Odaklı Gerçek Zamanlı İletişim", desc: "Dünyada olan olaylara sosyal medyada gerçek zamanlı tepki veren içerik/kampanya çalışmaları." },
+        { code: "SM04", name: "Etkileşim Çalışmaları (Tüketiciyle Bağ Kurma)", desc: "Markanın insanlarla bağ kurmasına, harekete geçmesine yönelik sosyal medya çalışmaları." },
+        { code: "SM05", name: "Sosyal Medyada Topluluk Yönetimi", desc: "Takipçi, hayran ve elçi topluluklarını yönetmek ve marka bağı kurmak için çalışmalar." },
+        { code: "SM06", name: "Sosyal Medyada Ünlü ve Influencer Kullanımı", desc: "Ünlünün/influencer'ın belirli bir kitleye marka mesajını ilettiği sosyal medya çalışmaları." },
+        { code: "SM07", name: "Ufuk Açan Sosyal Medya Fikirleri", desc: "Sosyal medyada yaratıcı ve yenilikçi bir yol deneyen, öncü olmayı başaran çalışmalar." },
+        { code: "SM08", name: "Holistik Sosyal Medya Kampanyası", desc: "Instagram, YouTube, TikTok, Twitter gibi platformları merkezine alan bütünsel kampanyalar." },
+        { code: "SM09", name: "Dikey Video Formatının En İyi Kullanımı", desc: "Stories, Reels, TikTok, YouTube Shorts gibi yüzeyler için dikey formatlı videolar." },
+        { code: "SM10", name: "Viral Fikirler", desc: "Kullanıcılar tarafından organik olarak paylaşılarak yayılmayı başaran fikirler." },
+        { code: "SM11", name: "Mizah Kullanımı", desc: "Markaların mizahı kullanarak oluşturduğu sosyal medya içerikleri." },
+        { code: "SM12", name: "Yaratıcı Yapay Zeka", isNew: true, desc: "Yapay zeka teknolojilerini kullanarak öncü sosyal medya projeleri." },
+        { code: "SM13", name: "Felis Global — Social Media", desc: "Türkiye dışı coğrafyalarda üretilen sosyal medya çalışmaları." },
+      ]},
+    ]
+  },
+  {
+    id: "SS", title: "Sosyal Sorumluluk", subtitle: "Sürdürülebilirlik ve Sosyal Sorumluluk",
+    icon: "♠", color: { icon: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)", code: "rgba(16,185,129,0.1)", codeText: "#34d399", badge: "rgba(16,185,129,0.1)", badgeText: "#6ee7b7", dot: "#10b981" },
+    subsections: [
+      { title: "Kurum / Kuruluş / Marka — İnsan", cats: [
+        { code: "SS01", name: "Kaliteli Eğitime Erişim", desc: "Herkese kapsayıcı ve kaliteli eğitim için sosyal sorumluluk projeleri." },
+        { code: "SS02", name: "Göçmenlere Yönelik Kreatif Entegrasyon", desc: "Göçmenlerin yerel kültüre uyum sağlamasını kolaylaştıran projeler." },
+        { code: "SS03", name: "Yerel Kalkınmaya Destek", desc: "Kırsal ve yerel kalkınmayı destekleyen, istihdam ve gelir modelleri yaratan projeler." },
+        { code: "SS04", name: "Sağlık ve Well-being", desc: "Sağlık sorunları hakkında farkındalık yaratan ve çözüm sunan projeler." },
+        { code: "SS05", name: "Yoksullukla Mücadele ve Kırılgan Gruplara Destek", desc: "Yoksulluğu ortadan kaldırmaya yönelik projeler." },
+        { code: "SS06", name: "Afet ve Kriz Anlarında Dayanışma", desc: "Deprem, sel, yangın gibi afet anlarında hızlı önlemler geliştiren projeler." },
+        { code: "SS07", name: "Toplumsal Cinsiyet Eşitliği ve Kadının Yükselişi", desc: "Kadın haklarını ve toplumsal cinsiyet eşitliğini destekleyen projeler." },
+        { code: "SS08", name: "Çocuklar ve Gençler için Fırsat Yaratmak", desc: "Çocuklara ve gençlere yönelik sosyal sorumluluk projeleri." },
+        { code: "SS09", name: "Engelsiz Yaşama Katkı", desc: "Engelli bireylerin toplumsal yaşama katılımını destekleyen projeler." },
+        { code: "SS10", name: "Kültür, Sanat ve Spora Yaratıcı Destek", desc: "Kültür/sanat/spor faaliyetlerine kitleleri teşvik eden projeler." },
+        { code: "SS11", name: "Özel Hedef Kitleler için Sosyal Sorumluluk", desc: "Belirli stratejik gruplar için hayata geçirilen yaratıcı destek çalışmaları." },
+      ]},
+      { title: "Kurum / Kuruluş / Marka — Çevre", cats: [
+        { code: "SS12", name: "İklim Kriziyle Mücadele", desc: "İklim değişikliğiyle mücadele için atılması gereken adımları vurgulayan çalışmalar." },
+        { code: "SS13", name: "Temiz Suya Erişim", desc: "Temiz su ve sanitasyonun herkes için sürdürülebilir yönetimine katkı sağlayan işler." },
+        { code: "SS14", name: "Sağlıklı Gıdaya Erişim", desc: "Sağlıklı gıdaya erişim yolları geliştiren projeler." },
+        { code: "SS15", name: "Sürdürülebilir Enerji Politikaları ve Döngüsel Ekonomi", desc: "Minimum atık üretimi ve yeşil dönüşümü sağlayan sosyal sorumluluk projeleri." },
+        { code: "SS16", name: "Hayvan Haklarını Koruyanlar", desc: "Hayvanlara yönelik sosyal sorumluluk projeleri ve hayvan haklarına yönelik iletişim." },
+        { code: "SS17", name: "Sürdürülebilir Kent ve Yaşam Alanları", desc: "Şehirlerin kapsayıcı, güvenli ve dayanıklı olmasına yönelik çabalar." },
+        { code: "SS18", name: "Geri Dönüşüm ve İleri Dönüşüm", desc: "İsraf ve atıkla mücadele eden, farkındalık ve davranış değişikliği yaratan projeler." },
+      ]},
+      { title: "Kurum / Kuruluş / Marka — Yönetim", cats: [
+        { code: "SS19", name: "Yaratıcı Marka Amacı Stratejileri", desc: "Çevresel ve toplumsal faydayı da hedefleyen marka amacı stratejisi çalışmaları." },
+        { code: "SS20", name: "Şirket Çalışanlarının Hedefe Dahil Edilmesi", desc: "Marka çalışanlarının aktif sorumluluk üstlendiği gönüllülük projeleri." },
+        { code: "SS21", name: "Teknolojiden Destek Alan Projeler", desc: "Mobil aplikasyonlar, dijital uygulamalar gibi teknoloji odaklı sosyal sorumluluk projeleri." },
+        { code: "SS22", name: "Davranışsal Değişiklik Yaratan Projeler", desc: "İçgörü temelli ve sürdürülebilir davranış değişikliği yaratan yaratıcı projeler." },
+        { code: "SS23", name: "Şeffaflık Stratejileri", desc: "Açık iletişim, şeffaflık ve hesap verebilirliği sağlayan projeler." },
+        { code: "SS24", name: "Çeşitlilik ve Dahiliyet Uygulamaları", desc: "Kurum içinde kapsayıcı insan ve kültür politikalarının yerleşiklik kazanması için yaratıcı uygulamalar." },
+        { code: "SS25", name: "Amaçlar için Ortaklıklar", desc: "Sosyal sorumluluk hedeflerinde kamu-özel-sivil toplum işbirlikleri." },
+      ]},
+      { title: "STK — İnsan", cats: [
+        { code: "SS26", name: "Kaliteli Eğitime Erişim (STK)", desc: "STK'lar için kaliteli eğitime erişimi destekleyen sosyal sorumluluk projeleri." },
+        { code: "SS27", name: "Göçmenlere Yönelik Kreatif Entegrasyon (STK)", desc: "STK'lar için göçmen entegrasyonu projeleri." },
+        { code: "SS28", name: "Yerel Kalkınmaya Destek (STK)", desc: "STK'lar için yerel kalkınma projeleri." },
+        { code: "SS29", name: "Sağlık ve Well-being (STK)", desc: "STK'lar için sağlık farkındalığı projeleri." },
+        { code: "SS30", name: "Yoksullukla Mücadele (STK)", desc: "STK'lar için yoksullukla mücadele projeleri." },
+        { code: "SS31", name: "Afet ve Kriz Dayanışması (STK)", desc: "STK'lar için afet ve kriz anlarında dayanışma projeleri." },
+        { code: "SS32", name: "Toplumsal Cinsiyet Eşitliği (STK)", desc: "STK'lar için kadın hakları ve cinsiyet eşitliği projeleri." },
+        { code: "SS33", name: "Çocuklar ve Gençler (STK)", desc: "STK'lar için çocuk ve gençlere yönelik projeler." },
+        { code: "SS34", name: "Engelsiz Yaşam (STK)", desc: "STK'lar için engellilik ve yaşlılık alanında projeler." },
+        { code: "SS35", name: "Kültür, Sanat ve Spora Destek (STK)", desc: "STK'lar için kültür ve sanat destekleri." },
+        { code: "SS36", name: "Özel Hedef Kitleler (STK)", desc: "STK'lar için özel ve stratejik gruplara yönelik destek çalışmaları." },
+      ]},
+      { title: "STK — Çevre ve Yönetim", cats: [
+        { code: "SS37", name: "İklim Kriziyle Mücadele (STK)", desc: "STK'lar için iklim değişikliğiyle mücadele çalışmaları." },
+        { code: "SS38", name: "Temiz Suya Erişim (STK)", desc: "STK'lar için temiz su projeleri." },
+        { code: "SS39", name: "Sağlıklı Gıdaya Erişim (STK)", desc: "STK'lar için sağlıklı gıdaya erişim projeleri." },
+        { code: "SS40", name: "Sürdürülebilir Enerji (STK)", desc: "STK'lar için yeşil dönüşüm projeleri." },
+        { code: "SS41", name: "Hayvan Hakları (STK)", desc: "STK'lar için hayvan hakları projeleri." },
+        { code: "SS42", name: "Sürdürülebilir Kent (STK)", desc: "STK'lar için kentsel sürdürülebilirlik projeleri." },
+        { code: "SS43", name: "Geri Dönüşüm (STK)", desc: "STK'lar için geri dönüşüm ve israf azaltma projeleri." },
+        { code: "SS44", name: "Teknolojiden Destek (STK)", desc: "STK'lar için teknoloji destekli sosyal sorumluluk projeleri." },
+        { code: "SS45", name: "Davranışsal Değişiklik (STK)", desc: "STK'lar için sürdürülebilir davranış değişikliği projeleri." },
+        { code: "SS46", name: "Şeffaflık Stratejileri (STK)", desc: "STK'lar için şeffaflık ve hesap verebilirlik projeleri." },
+        { code: "SS47", name: "Çeşitlilik ve Dahiliyet (STK)", desc: "STK'lar için kapsayıcı politika çalışmaları." },
+        { code: "SS48", name: "Amaçlar için Ortaklıklar (STK)", desc: "STK'lar için sürdürülebilirlik ekosistemi ortaklıkları." },
+        { code: "SS49", name: "Felis Global — Sosyal Sorumluluk", desc: "Türkiye dışı coğrafyalarda üretilen sosyal sorumluluk çalışmaları." },
+      ]},
+    ]
+  },
+];
+
+let workData = {};
+
+async function loadWorkData() {
+  try {
+    const res = await fetch('/api/works');
+    if (res.ok) {
+      workData = await res.json();
+    }
+  } catch (e) {
+    workData = {};
+  }
+}
+
+async function saveWork(kategori_kodu, is_adi) {
+  try {
+    await fetch('/api/works', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kategori_kodu, is_adi })
+    });
+  } catch (e) {
+    console.error('Save failed', e);
+  }
+}
+
+function countAllCats() {
+  return sections.reduce((sum, s) => sum + s.subsections.reduce((ss, sub) => ss + sub.cats.length, 0), 0);
+}
+
+function countWorks() {
+  return Object.values(workData).reduce((sum, arr) => sum + arr.length, 0);
+}
+
+function updateStats() {
+  document.getElementById('total-sections').textContent = sections.length;
+  document.getElementById('total-cats').textContent = countAllCats();
+  document.getElementById('total-works').textContent = countWorks();
+}
+
+function render(filtered) {
+  const grid = document.getElementById('sectionGrid');
+  const noRes = document.getElementById('noResults');
+  grid.innerHTML = '';
+  
+  const data = filtered || sections;
+  if (data.length === 0) {
+    noRes.classList.remove('hidden');
+    return;
+  }
+  noRes.classList.add('hidden');
+
+  data.forEach(section => {
+    const totalCats = section.subsections.reduce((s, sub) => s + sub.cats.length, 0);
+    const card = document.createElement('div');
+    card.className = 'section-card';
+    card.dataset.id = section.id;
+
+    const iconDiv = `<div class="section-icon" style="background:${section.color.icon};border:1px solid ${section.color.border}">${section.icon}</div>`;
+    const badge = `<span class="count-badge" style="background:${section.color.badge};color:${section.color.badgeText};border:1px solid ${section.color.border}">${totalCats} kategori</span>`;
+
+    let bodyHTML = '';
+    section.subsections.forEach(sub => {
+      if (sub.title) bodyHTML += `<div class="subsection-title">${sub.title}</div>`;
+      bodyHTML += '<div class="category-list">';
+      sub.cats.forEach(cat => {
+        const works = workData[cat.code] || [];
+        const newBadge = cat.isNew ? '<span class="new-badge">yeni</span>' : '';
+        const workCount = works.length > 0 ? `<span style="font-size:11px;color:${section.color.codeText};margin-left:auto;">${works.length} iş</span>` : '';
+        bodyHTML += `
+          <div class="cat-item" data-code="${cat.code}">
+            <span class="cat-code" style="background:${section.color.code};color:${section.color.codeText};border:1px solid ${section.color.border}">${cat.code}</span>
+            <div class="cat-info">
+              <div class="cat-name">${cat.name} ${newBadge} ${workCount}</div>
+              <div class="cat-desc">${cat.desc}
+                <div>
+                  <button class="our-work-btn" style="background:rgba(255,255,255,0.05);border-color:${section.color.border};color:${section.color.codeText}" onclick="toggleWorkPanel(event, '${cat.code}', '${section.color.codeText}', '${section.color.dot}')">
+                    ＋ Yarışacağımız işleri ekle / gör
+                  </button>
+                </div>
+                <div class="work-panel" id="wp-${cat.code}">
+                  <div id="wlist-${cat.code}"></div>
+                  <div class="add-work-input">
+                    <input type="text" id="winput-${cat.code}" placeholder="İş adı veya marka..." onkeydown="if(event.key==='Enter')addWork('${cat.code}')">
+                    <button class="add-btn" onclick="addWork('${cat.code}')">Ekle</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="expand-icon">▾</span>
+          </div>`;
+      });
+      bodyHTML += '</div>';
+    });
+
+    card.innerHTML = `
+      <div class="section-header">
+        <div class="section-left">
+          ${iconDiv}
+          <div>
+            <div class="section-title">${section.title}</div>
+            <div class="section-meta">${section.subtitle}</div>
+          </div>
+        </div>
+        <div class="section-right">
+          ${badge}
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="section-body">${bodyHTML}</div>`;
+
+    card.querySelector('.section-header').addEventListener('click', () => {
+      card.classList.toggle('open');
+    });
+
+    card.querySelectorAll('.cat-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.our-work-btn') || e.target.closest('.work-panel') || e.target.closest('.add-work-input')) return;
+        item.classList.toggle('expanded');
+      });
+    });
+
+    grid.appendChild(card);
+    renderWorkList(card, section);
+  });
+}
+
+function renderWorkList(card, section) {
+  if (!card) {
+    card = document.getElementById('sectionGrid').querySelector(`[data-id="${section.id}"]`);
+  }
+  if (!card) return;
+  section.subsections.forEach(sub => {
+    sub.cats.forEach(cat => {
+      const wlist = card.querySelector(`#wlist-${cat.code}`);
+      if (!wlist) return;
+      const works = workData[cat.code] || [];
+      wlist.innerHTML = works.length === 0 
+        ? '<div style="font-size:12px;color:rgba(232,232,240,0.3);padding:4px 0;">Henüz iş eklenmedi.</div>'
+        : works.map(w => `<div class="work-item"><span class="work-dot" style="background:${section.color.dot}"></span>${w}</div>`).join('');
+    });
+  });
+}
+
+function toggleWorkPanel(e, code, color, dot) {
+  e.stopPropagation();
+  const panel = document.getElementById('wp-' + code);
+  panel.classList.toggle('open');
+}
+
+async function addWork(code) {
+  const input = document.getElementById('winput-' + code);
+  const val = input.value.trim();
+  if (!val) return;
+  if (!workData[code]) workData[code] = [];
+  workData[code].push(val);
+  input.value = '';
+  await saveWork(code, val);
+  
+  const section = sections.find(s => s.subsections.some(sub => sub.cats.some(c => c.code === code)));
+  if (section) {
+    const card = document.getElementById('sectionGrid').querySelector(`[data-id="${section.id}"]`);
+    renderWorkList(card, section);
+    const catItem = card.querySelector(`[data-code="${code}"]`);
+    if (catItem) {
+      const nameDiv = catItem.querySelector('.cat-name');
+      const existing = nameDiv.querySelector('.work-count-span');
+      if (existing) {
+        existing.textContent = workData[code].length + ' iş';
+      } else {
+        const sp = document.createElement('span');
+        sp.className = 'work-count-span';
+        sp.style.cssText = `font-size:11px;color:${color};margin-left:auto;`;
+        sp.textContent = workData[code].length + ' iş';
+        nameDiv.appendChild(sp);
+      }
+    }
+  }
+  updateStats();
+}
+
+function search(q) {
+  if (!q) { render(null); return; }
+  q = q.toLowerCase();
+  const result = [];
+  sections.forEach(section => {
+    const matchSec = section.title.toLowerCase().includes(q) || section.subtitle.toLowerCase().includes(q);
+    const filteredSubs = section.subsections.map(sub => {
+      const matchSub = sub.title && sub.title.toLowerCase().includes(q);
+      const filteredCats = sub.cats.filter(cat => 
+        cat.code.toLowerCase().includes(q) || cat.name.toLowerCase().includes(q) || (cat.desc && cat.desc.toLowerCase().includes(q)) || matchSub || matchSec
+      );
+      return filteredCats.length > 0 ? { ...sub, cats: filteredCats } : null;
+    }).filter(Boolean);
+    if (filteredSubs.length > 0) result.push({ ...section, subsections: filteredSubs });
+  });
+  render(result);
+}
+
+let searchTimer;
+document.getElementById('searchInput').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => search(e.target.value), 200);
+});
+
+(async function init() {
+  await loadWorkData();
+  render(null);
+  updateStats();
+})();
+
+(function() {
+  const deadline = new Date('2025-09-23T23:59:59');
+  function tick() {
+    const now = new Date();
+    const diff = deadline - now;
+    const bar = document.getElementById('countdownBar');
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '00';
+      document.getElementById('cd-hours').textContent = '00';
+      document.getElementById('cd-mins').textContent = '00';
+      document.getElementById('cd-secs').textContent = '00';
+      bar.classList.add('ended');
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+    if (d < 7) bar.classList.add('urgent');
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
