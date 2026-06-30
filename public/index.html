@@ -179,9 +179,24 @@
 
   .search-bar input::placeholder { color: rgba(232,232,240,0.3); }
 
+  .tag-section {
+    max-width: 700px;
+    margin: 1.4rem auto 0;
+  }
+
+  .tag-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(232,232,240,0.35);
+    text-align: center;
+    margin-bottom: 0.6rem;
+  }
+
   .brand-tags-wrap {
     max-width: 700px;
-    margin: 1rem auto 0;
+    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -212,6 +227,22 @@
     background: rgba(139,92,246,0.3);
     border-color: rgba(139,92,246,0.6);
     color: #fff;
+  }
+
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .status-tag.active {
+    box-shadow: 0 0 0 2px currentColor inset;
   }
 
   .brand-tag-count {
@@ -262,9 +293,9 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.6rem 0;
+    padding: 0.65rem 0;
     border-top: 1px solid rgba(255,255,255,0.06);
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .brand-panel-row:first-child {
@@ -272,9 +303,9 @@
   }
 
   .brand-panel-cat {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: 6px;
     background: rgba(139,92,246,0.12);
     color: #c4b5fd;
@@ -282,7 +313,7 @@
   }
 
   .brand-panel-proj {
-    color: rgba(232,232,240,0.8);
+    color: rgba(232,232,240,0.85);
   }
 
   .search-icon {
@@ -349,15 +380,15 @@
   }
 
   .section-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: #e8e8f0;
     margin-bottom: 2px;
   }
 
   .section-meta {
-    font-size: 12px;
-    color: rgba(232,232,240,0.4);
+    font-size: 13px;
+    color: rgba(232,232,240,0.45);
   }
 
   .section-right {
@@ -397,12 +428,12 @@
   }
 
   .subsection-title {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     padding: 1.1rem 1.5rem 0.5rem;
-    color: rgba(232,232,240,0.35);
+    color: rgba(232,232,240,0.4);
     border-top: 1px solid rgba(255,255,255,0.04);
   }
 
@@ -430,7 +461,7 @@
   }
 
   .cat-code {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     font-family: 'SF Mono', 'Fira Code', monospace;
     padding: 3px 8px;
@@ -443,9 +474,9 @@
   .cat-info { flex: 1; min-width: 0; }
 
   .cat-name {
-    font-size: 0.88rem;
+    font-size: 1rem;
     font-weight: 500;
-    color: #d8d8e8;
+    color: #e2e2ee;
     display: flex;
     align-items: center;
     gap: 0.4rem;
@@ -465,10 +496,10 @@
   }
 
   .cat-desc {
-    font-size: 0.78rem;
-    color: rgba(232,232,240,0.38);
-    line-height: 1.5;
-    margin-top: 3px;
+    font-size: 0.88rem;
+    color: rgba(232,232,240,0.45);
+    line-height: 1.55;
+    margin-top: 4px;
     display: none;
   }
 
@@ -494,9 +525,9 @@
     align-items: center;
     gap: 0.4rem;
     margin-top: 0.5rem;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
-    padding: 4px 10px;
+    padding: 5px 11px;
     border-radius: 6px;
     cursor: pointer;
     border: 1px solid;
@@ -515,22 +546,46 @@
   .work-panel.open { display: block; }
 
   .works-table-wrap {
-    margin-top: 0.5rem;
+    margin-top: 0.6rem;
   }
 
   .works-table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 13px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .works-table thead th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 7px 12px;
+    color: rgba(232,232,240,0.5);
+    border-bottom: 1px solid;
+  }
+
+  .works-table tbody tr {
+    transition: background 0.1s;
+  }
+
+  .works-table tbody tr:nth-child(odd) {
+    background: rgba(255,255,255,0.025);
+  }
+
+  .works-table tbody tr:hover {
+    background: rgba(255,255,255,0.06);
   }
 
   .works-table td {
-    padding: 6px 10px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    color: rgba(232,232,240,0.75);
+    padding: 8px 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    color: rgba(232,232,240,0.85);
   }
 
   .works-table tr:first-child td {
@@ -541,16 +596,28 @@
     width: 28px;
     color: rgba(232,232,240,0.3);
     font-variant-numeric: tabular-nums;
+    font-size: 11px;
   }
 
   .works-table-brand {
-    width: 30%;
-    font-weight: 600;
-    color: rgba(232,232,240,0.6);
+    width: 32%;
+    font-weight: 700;
+    padding-left: 12px;
+    border-left: 3px solid;
   }
 
   .works-table-name {
     width: 100%;
+    color: rgba(232,232,240,0.85);
+  }
+
+  .status-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
   }
 
   .work-item {
@@ -574,12 +641,14 @@
 
   .add-work-input {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 0.6rem;
   }
 
   .add-work-input input {
     flex: 1;
+    min-width: 120px;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 6px;
@@ -590,6 +659,22 @@
   }
 
   .add-work-input input::placeholder { color: rgba(232,232,240,0.25); }
+
+  .status-select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: #e8e8f0;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .status-select option {
+    background: #1a1a24;
+    color: #e8e8f0;
+  }
 
   .add-btn {
     background: rgba(139,92,246,0.2);
@@ -649,7 +734,14 @@
     <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Kategori ara... (örn: film, dijital, sosyal medya)">
   </div>
-  <div class="brand-tags-wrap" id="brandTagsWrap"></div>
+  <div class="tag-section">
+    <div class="tag-section-label">Markalar</div>
+    <div class="brand-tags-wrap" id="brandTagsWrap"></div>
+  </div>
+  <div class="tag-section">
+    <div class="tag-section-label">Yayın Durumu</div>
+    <div class="brand-tags-wrap" id="statusTagsWrap"></div>
+  </div>
 </header>
 
 <div class="container">
@@ -1281,18 +1373,26 @@ function render(filtered) {
         const newBadge = cat.isNew ? '<span class="new-badge">yeni</span>' : '';
         const workCount = works.length > 0 ? `<span style="font-size:11px;color:${section.color.codeText};margin-left:auto;">${works.length} iş</span>` : '';
         const worksTableRows = works.map((w, i) => {
-          const parts = w.split(' — ');
-          const brand = parts.length > 1 ? parts[0] : '';
-          const proj = parts.length > 1 ? parts.slice(1).join(' — ') : w;
+          const { brand, proj, status } = parseWork(w);
+          const sc = STATUS_COLORS[status] || STATUS_COLORS['Sunulmadı'];
           return `
           <tr>
             <td class="works-table-num">${i + 1}</td>
-            <td class="works-table-brand">${brand}</td>
+            <td class="works-table-brand" style="color:${section.color.codeText};border-left-color:${section.color.dot}">${brand}</td>
             <td class="works-table-name">${proj}</td>
+            <td><span class="status-badge" style="background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${status}</span></td>
           </tr>`;
         }).join('');
         const worksTable = works.length > 0 ? `
           <table class="works-table" style="border-color:${section.color.border}">
+            <thead>
+              <tr style="border-bottom-color:${section.color.border}">
+                <th></th>
+                <th style="border-bottom-color:${section.color.border}">Marka</th>
+                <th style="border-bottom-color:${section.color.border}">Proje</th>
+                <th style="border-bottom-color:${section.color.border}">Durum</th>
+              </tr>
+            </thead>
             <tbody>${worksTableRows}</tbody>
           </table>` : '';
         bodyHTML += `
@@ -1308,7 +1408,13 @@ function render(filtered) {
                 <div id="wlist-${cat.code}"></div>
                 <div class="add-work-input">
                   <input type="text" id="winput-brand-${cat.code}" placeholder="Marka..." onkeydown="if(event.key==='Enter')document.getElementById('winput-proj-${cat.code}').focus()">
-                  <input type="text" id="winput-proj-${cat.code}" placeholder="Proje adı..." onkeydown="if(event.key==='Enter')addWork('${cat.code}')">
+                  <input type="text" id="winput-proj-${cat.code}" placeholder="Proje adı..." onkeydown="if(event.key==='Enter')document.getElementById('winput-status-${cat.code}').focus()">
+                  <select id="winput-status-${cat.code}" class="status-select">
+                    <option value="Sunulmadı">Sunulmadı</option>
+                    <option value="Müşteri Onayında">Müşteri Onayında</option>
+                    <option value="Prodüksiyon Aşamasında">Prodüksiyon Aşamasında</option>
+                    <option value="Yayınlandı">Yayınlandı</option>
+                  </select>
                   <button class="add-btn" onclick="addWork('${cat.code}')">Ekle</button>
                 </div>
               </div>
@@ -1378,14 +1484,17 @@ function toggleWorkPanel(e, code, color, dot) {
 async function addWork(code) {
   const brandInput = document.getElementById('winput-brand-' + code);
   const projInput = document.getElementById('winput-proj-' + code);
+  const statusInput = document.getElementById('winput-status-' + code);
   const brand = brandInput.value.trim();
   const proj = projInput.value.trim();
+  const status = statusInput.value;
   if (!brand || !proj) return;
-  const val = `${brand} — ${proj}`;
+  const val = `${brand} — ${proj} — ${status}`;
   if (!workData[code]) workData[code] = [];
   workData[code].push(val);
   brandInput.value = '';
   projInput.value = '';
+  statusInput.value = 'Sunulmadı';
   await saveWork(code, val);
 
   const lastSearch = document.getElementById('searchInput').value;
@@ -1405,6 +1514,35 @@ async function addWork(code) {
   }
   updateStats();
   renderBrandTags();
+  renderStatusTags();
+}
+
+const STATUS_LIST = ['Sunulmadı', 'Müşteri Onayında', 'Prodüksiyon Aşamasında', 'Yayınlandı'];
+const STATUS_COLORS = {
+  'Sunulmadı': { bg: 'rgba(156,163,175,0.15)', text: '#9ca3af', border: 'rgba(156,163,175,0.3)' },
+  'Müşteri Onayında': { bg: 'rgba(251,191,36,0.15)', text: '#fbbf24', border: 'rgba(251,191,36,0.3)' },
+  'Prodüksiyon Aşamasında': { bg: 'rgba(59,130,246,0.15)', text: '#60a5fa', border: 'rgba(59,130,246,0.3)' },
+  'Yayınlandı': { bg: 'rgba(16,185,129,0.15)', text: '#34d399', border: 'rgba(16,185,129,0.3)' },
+};
+
+function parseWork(w) {
+  const parts = w.split(' — ');
+  let brand = '', proj = w, status = 'Sunulmadı';
+  if (parts.length >= 3) {
+    brand = parts[0].trim();
+    status = parts[parts.length - 1].trim();
+    proj = parts.slice(1, parts.length - 1).join(' — ').trim();
+    if (!STATUS_LIST.includes(status)) {
+      // last part isn't actually a status (older data), treat as part of project name
+      proj = parts.slice(1).join(' — ').trim();
+      status = 'Sunulmadı';
+    }
+  } else if (parts.length === 2) {
+    brand = parts[0].trim();
+    proj = parts[1].trim();
+    status = 'Sunulmadı';
+  }
+  return { brand, proj, status };
 }
 
 function getBrandMap() {
@@ -1413,16 +1551,29 @@ function getBrandMap() {
     const cat = findCatByCode(code);
     if (!cat) continue;
     (workData[code] || []).forEach(w => {
-      const parts = w.split(' — ');
-      if (parts.length < 2) return;
-      const brand = parts[0].trim();
-      const proj = parts.slice(1).join(' — ').trim();
+      const { brand, proj, status } = parseWork(w);
       if (!brand) return;
       if (!brandMap[brand]) brandMap[brand] = [];
-      brandMap[brand].push({ code, catName: cat.name, proj });
+      brandMap[brand].push({ code, catName: cat.name, proj, status });
     });
   }
   return brandMap;
+}
+
+function getStatusMap() {
+  const statusMap = {};
+  STATUS_LIST.forEach(s => statusMap[s] = []);
+  for (const code in workData) {
+    const cat = findCatByCode(code);
+    if (!cat) continue;
+    (workData[code] || []).forEach(w => {
+      const { brand, proj, status } = parseWork(w);
+      if (!brand) return;
+      if (!statusMap[status]) statusMap[status] = [];
+      statusMap[status].push({ code, catName: cat.name, brand, proj });
+    });
+  }
+  return statusMap;
 }
 
 function findCatByCode(code) {
@@ -1440,7 +1591,7 @@ function renderBrandTags() {
   const brandMap = getBrandMap();
   const brands = Object.keys(brandMap).sort();
   if (brands.length === 0) {
-    wrap.innerHTML = '';
+    wrap.innerHTML = '<span style="font-size:12px;color:rgba(232,232,240,0.25);">Henüz iş eklenmedi.</span>';
     return;
   }
   wrap.innerHTML = brands.map(b => `
@@ -1448,6 +1599,66 @@ function renderBrandTags() {
       ${b} <span class="brand-tag-count">${brandMap[b].length}</span>
     </span>
   `).join('');
+}
+
+function renderStatusTags() {
+  const wrap = document.getElementById('statusTagsWrap');
+  const statusMap = getStatusMap();
+  const totalWorks = Object.values(statusMap).reduce((s, arr) => s + arr.length, 0);
+  if (totalWorks === 0) {
+    wrap.innerHTML = '<span style="font-size:12px;color:rgba(232,232,240,0.25);">Henüz iş eklenmedi.</span>';
+    return;
+  }
+  wrap.innerHTML = STATUS_LIST.map(s => {
+    const sc = STATUS_COLORS[s];
+    const count = (statusMap[s] || []).length;
+    return `
+    <span class="status-tag" data-status="${s}" style="background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}" onclick="showStatusPanel('${s}')">
+      ${s} <span class="brand-tag-count">${count}</span>
+    </span>`;
+  }).join('');
+}
+
+function showStatusPanel(status) {
+  const statusMap = getStatusMap();
+  const items = statusMap[status] || [];
+  const sc = STATUS_COLORS[status];
+  const panel = document.getElementById('brandPanel');
+  panel.classList.remove('hidden');
+  panel.innerHTML = `
+    <div class="brand-panel-header">
+      <div class="brand-panel-title" style="color:${sc.text}">${status} — ${items.length} iş</div>
+      <button class="brand-panel-close" onclick="closeBrandPanel()">✕</button>
+    </div>
+    ${items.map(it => `
+      <div class="brand-panel-row">
+        <span class="brand-panel-cat">${it.code}</span>
+        <span style="font-weight:700;color:rgba(232,232,240,0.9);">${it.brand}</span>
+        <span class="brand-panel-proj">${it.proj}</span>
+        <span style="color:rgba(232,232,240,0.45);font-size:12px;margin-left:auto;">${it.catName}</span>
+      </div>
+    `).join('')}
+  `;
+  document.querySelectorAll('.status-tag').forEach(t => {
+    t.classList.toggle('active', t.dataset.status === status);
+  });
+  document.querySelectorAll('.brand-tag').forEach(t => t.classList.remove('active'));
+
+  const codes = new Set(items.map(it => it.code));
+  const filtered = [];
+  sections.forEach(section => {
+    const filteredSubs = section.subsections.map(sub => {
+      const filteredCats = sub.cats.filter(cat => codes.has(cat.code));
+      return filteredCats.length > 0 ? { ...sub, cats: filteredCats } : null;
+    }).filter(Boolean);
+    if (filteredSubs.length > 0) filtered.push({ ...section, subsections: filteredSubs });
+  });
+  document.getElementById('searchInput').value = '';
+  render(filtered);
+  document.querySelectorAll('.section-card').forEach(c => c.classList.add('open'));
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.add('expanded'));
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function showBrandPanel(brand) {
@@ -1460,23 +1671,45 @@ function showBrandPanel(brand) {
       <div class="brand-panel-title">${brand} — ${items.length} iş</div>
       <button class="brand-panel-close" onclick="closeBrandPanel()">✕</button>
     </div>
-    ${items.map(it => `
+    ${items.map(it => {
+      const sc = STATUS_COLORS[it.status] || STATUS_COLORS['Sunulmadı'];
+      return `
       <div class="brand-panel-row">
         <span class="brand-panel-cat">${it.code}</span>
         <span class="brand-panel-proj">${it.proj}</span>
-        <span style="color:rgba(232,232,240,0.3);font-size:11px;margin-left:auto;">${it.catName}</span>
+        <span class="status-badge" style="background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${it.status}</span>
+        <span style="color:rgba(232,232,240,0.45);font-size:12px;margin-left:auto;">${it.catName}</span>
       </div>
-    `).join('')}
+    `;
+    }).join('')}
   `;
   document.querySelectorAll('.brand-tag').forEach(t => {
     t.classList.toggle('active', t.dataset.brand === brand);
   });
+  document.querySelectorAll('.status-tag').forEach(t => t.classList.remove('active'));
+
+  const codes = new Set(items.map(it => it.code));
+  const filtered = [];
+  sections.forEach(section => {
+    const filteredSubs = section.subsections.map(sub => {
+      const filteredCats = sub.cats.filter(cat => codes.has(cat.code));
+      return filteredCats.length > 0 ? { ...sub, cats: filteredCats } : null;
+    }).filter(Boolean);
+    if (filteredSubs.length > 0) filtered.push({ ...section, subsections: filteredSubs });
+  });
+  document.getElementById('searchInput').value = '';
+  render(filtered);
+  document.querySelectorAll('.section-card').forEach(c => c.classList.add('open'));
+  document.querySelectorAll('.cat-item').forEach(c => c.classList.add('expanded'));
+
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function closeBrandPanel() {
   document.getElementById('brandPanel').classList.add('hidden');
   document.querySelectorAll('.brand-tag').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.status-tag').forEach(t => t.classList.remove('active'));
+  render(null);
 }
 
 function search(q) {
@@ -1508,6 +1741,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
   render(null);
   updateStats();
   renderBrandTags();
+  renderStatusTags();
 })();
 
 (function() {
