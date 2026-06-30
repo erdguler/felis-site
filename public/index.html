@@ -387,7 +387,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    margin-top: 0.6rem;
+    margin-top: 0.5rem;
     font-size: 11px;
     font-weight: 600;
     padding: 4px 10px;
@@ -407,6 +407,39 @@
   }
 
   .work-panel.open { display: block; }
+
+  .works-table-wrap {
+    margin-top: 0.5rem;
+  }
+
+  .works-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 12px;
+  }
+
+  .works-table td {
+    padding: 6px 10px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    color: rgba(232,232,240,0.75);
+  }
+
+  .works-table tr:first-child td {
+    border-top: none;
+  }
+
+  .works-table-num {
+    width: 28px;
+    color: rgba(232,232,240,0.3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .works-table-name {
+    width: 100%;
+  }
 
   .work-item {
     display: flex;
@@ -481,7 +514,7 @@
 
 <header>
   <div id="countdownBar" class="countdown-bar">
-    <span class="countdown-label">⏱ Son Başvuru — 23 Eylül 2025</span>
+    <span class="countdown-label">⏱ Son Başvuru — 23 Eylül 2026</span>
     <div class="countdown-units">
       <div class="cd-block"><div class="cd-num" id="cd-days">--</div><div class="cd-unit">gün</div></div>
       <span class="cd-sep">:</span>
@@ -1133,25 +1166,32 @@ function render(filtered) {
         const works = workData[cat.code] || [];
         const newBadge = cat.isNew ? '<span class="new-badge">yeni</span>' : '';
         const workCount = works.length > 0 ? `<span style="font-size:11px;color:${section.color.codeText};margin-left:auto;">${works.length} iş</span>` : '';
+        const worksTableRows = works.map((w, i) => `
+          <tr>
+            <td class="works-table-num">${i + 1}</td>
+            <td class="works-table-name">${w}</td>
+          </tr>`).join('');
+        const worksTable = works.length > 0 ? `
+          <table class="works-table" style="border-color:${section.color.border}">
+            <tbody>${worksTableRows}</tbody>
+          </table>` : '';
         bodyHTML += `
           <div class="cat-item" data-code="${cat.code}">
             <span class="cat-code" style="background:${section.color.code};color:${section.color.codeText};border:1px solid ${section.color.border}">${cat.code}</span>
             <div class="cat-info">
               <div class="cat-name">${cat.name} ${newBadge} ${workCount}</div>
-              <div class="cat-desc">${cat.desc}
-                <div>
-                  <button class="our-work-btn" style="background:rgba(255,255,255,0.05);border-color:${section.color.border};color:${section.color.codeText}" onclick="toggleWorkPanel(event, '${cat.code}', '${section.color.codeText}', '${section.color.dot}')">
-                    ＋ Yarışacağımız işleri ekle / gör
-                  </button>
-                </div>
-                <div class="work-panel" id="wp-${cat.code}">
-                  <div id="wlist-${cat.code}"></div>
-                  <div class="add-work-input">
-                    <input type="text" id="winput-${cat.code}" placeholder="İş adı veya marka..." onkeydown="if(event.key==='Enter')addWork('${cat.code}')">
-                    <button class="add-btn" onclick="addWork('${cat.code}')">Ekle</button>
-                  </div>
+              <div class="cat-desc">${cat.desc}</div>
+              <button class="our-work-btn" style="background:rgba(255,255,255,0.05);border-color:${section.color.border};color:${section.color.codeText}" onclick="toggleWorkPanel(event, '${cat.code}', '${section.color.codeText}', '${section.color.dot}')">
+                ＋ İş ekle
+              </button>
+              <div class="work-panel" id="wp-${cat.code}">
+                <div id="wlist-${cat.code}"></div>
+                <div class="add-work-input">
+                  <input type="text" id="winput-${cat.code}" placeholder="İş adı veya marka..." onkeydown="if(event.key==='Enter')addWork('${cat.code}')">
+                  <button class="add-btn" onclick="addWork('${cat.code}')">Ekle</button>
                 </div>
               </div>
+              <div class="works-table-wrap" id="wtable-${cat.code}">${worksTable}</div>
             </div>
             <span class="expand-icon">▾</span>
           </div>`;
@@ -1276,7 +1316,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
 })();
 
 (function() {
-  const deadline = new Date('2025-09-23T23:59:59');
+  const deadline = new Date('2026-09-23T23:59:59');
   function tick() {
     const now = new Date();
     const diff = deadline - now;
