@@ -179,6 +179,112 @@
 
   .search-bar input::placeholder { color: rgba(232,232,240,0.3); }
 
+  .brand-tags-wrap {
+    max-width: 700px;
+    margin: 1rem auto 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .brand-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.25);
+    color: #c4b5fd;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .brand-tag:hover {
+    background: rgba(139,92,246,0.18);
+    border-color: rgba(139,92,246,0.4);
+  }
+
+  .brand-tag.active {
+    background: rgba(139,92,246,0.3);
+    border-color: rgba(139,92,246,0.6);
+    color: #fff;
+  }
+
+  .brand-tag-count {
+    font-size: 10px;
+    color: rgba(232,232,240,0.4);
+    background: rgba(0,0,0,0.25);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  .brand-panel {
+    background: rgba(139,92,246,0.05);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .brand-panel-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #c4b5fd;
+  }
+
+  .brand-panel-close {
+    background: rgba(255,255,255,0.06);
+    border: none;
+    color: rgba(232,232,240,0.6);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .brand-panel-close:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .brand-panel-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+  }
+
+  .brand-panel-row:first-child {
+    border-top: none;
+  }
+
+  .brand-panel-cat {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(139,92,246,0.12);
+    color: #c4b5fd;
+    flex-shrink: 0;
+  }
+
+  .brand-panel-proj {
+    color: rgba(232,232,240,0.8);
+  }
+
   .search-icon {
     position: absolute;
     left: 0.9rem;
@@ -437,6 +543,12 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .works-table-brand {
+    width: 30%;
+    font-weight: 600;
+    color: rgba(232,232,240,0.6);
+  }
+
   .works-table-name {
     width: 100%;
   }
@@ -537,9 +649,11 @@
     <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Kategori ara... (örn: film, dijital, sosyal medya)">
   </div>
+  <div class="brand-tags-wrap" id="brandTagsWrap"></div>
 </header>
 
 <div class="container">
+  <div class="brand-panel hidden" id="brandPanel"></div>
   <div class="section-grid" id="sectionGrid"></div>
   <div class="no-results hidden" id="noResults">Arama sonucu bulunamadı.</div>
 </div>
@@ -1166,11 +1280,17 @@ function render(filtered) {
         const works = workData[cat.code] || [];
         const newBadge = cat.isNew ? '<span class="new-badge">yeni</span>' : '';
         const workCount = works.length > 0 ? `<span style="font-size:11px;color:${section.color.codeText};margin-left:auto;">${works.length} iş</span>` : '';
-        const worksTableRows = works.map((w, i) => `
+        const worksTableRows = works.map((w, i) => {
+          const parts = w.split(' — ');
+          const brand = parts.length > 1 ? parts[0] : '';
+          const proj = parts.length > 1 ? parts.slice(1).join(' — ') : w;
+          return `
           <tr>
             <td class="works-table-num">${i + 1}</td>
-            <td class="works-table-name">${w}</td>
-          </tr>`).join('');
+            <td class="works-table-brand">${brand}</td>
+            <td class="works-table-name">${proj}</td>
+          </tr>`;
+        }).join('');
         const worksTable = works.length > 0 ? `
           <table class="works-table" style="border-color:${section.color.border}">
             <tbody>${worksTableRows}</tbody>
@@ -1187,7 +1307,8 @@ function render(filtered) {
               <div class="work-panel" id="wp-${cat.code}">
                 <div id="wlist-${cat.code}"></div>
                 <div class="add-work-input">
-                  <input type="text" id="winput-${cat.code}" placeholder="İş adı veya marka..." onkeydown="if(event.key==='Enter')addWork('${cat.code}')">
+                  <input type="text" id="winput-brand-${cat.code}" placeholder="Marka..." onkeydown="if(event.key==='Enter')document.getElementById('winput-proj-${cat.code}').focus()">
+                  <input type="text" id="winput-proj-${cat.code}" placeholder="Proje adı..." onkeydown="if(event.key==='Enter')addWork('${cat.code}')">
                   <button class="add-btn" onclick="addWork('${cat.code}')">Ekle</button>
                 </div>
               </div>
@@ -1255,34 +1376,107 @@ function toggleWorkPanel(e, code, color, dot) {
 }
 
 async function addWork(code) {
-  const input = document.getElementById('winput-' + code);
-  const val = input.value.trim();
-  if (!val) return;
+  const brandInput = document.getElementById('winput-brand-' + code);
+  const projInput = document.getElementById('winput-proj-' + code);
+  const brand = brandInput.value.trim();
+  const proj = projInput.value.trim();
+  if (!brand || !proj) return;
+  const val = `${brand} — ${proj}`;
   if (!workData[code]) workData[code] = [];
   workData[code].push(val);
-  input.value = '';
+  brandInput.value = '';
+  projInput.value = '';
   await saveWork(code, val);
-  
-  const section = sections.find(s => s.subsections.some(sub => sub.cats.some(c => c.code === code)));
-  if (section) {
-    const card = document.getElementById('sectionGrid').querySelector(`[data-id="${section.id}"]`);
-    renderWorkList(card, section);
-    const catItem = card.querySelector(`[data-code="${code}"]`);
-    if (catItem) {
-      const nameDiv = catItem.querySelector('.cat-name');
-      const existing = nameDiv.querySelector('.work-count-span');
-      if (existing) {
-        existing.textContent = workData[code].length + ' iş';
-      } else {
-        const sp = document.createElement('span');
-        sp.className = 'work-count-span';
-        sp.style.cssText = `font-size:11px;color:${color};margin-left:auto;`;
-        sp.textContent = workData[code].length + ' iş';
-        nameDiv.appendChild(sp);
-      }
-    }
+
+  const lastSearch = document.getElementById('searchInput').value;
+  if (lastSearch) {
+    search(lastSearch);
+  } else {
+    render(null);
+  }
+  const catItem = document.getElementById('sectionGrid').querySelector(`[data-code="${code}"]`);
+  if (catItem) {
+    const panel = document.getElementById('wp-' + code);
+    if (panel) panel.classList.add('open');
+    catItem.classList.add('expanded');
+    const parentCard = catItem.closest('.section-card');
+    if (parentCard) parentCard.classList.add('open');
+    catItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
   updateStats();
+  renderBrandTags();
+}
+
+function getBrandMap() {
+  const brandMap = {};
+  for (const code in workData) {
+    const cat = findCatByCode(code);
+    if (!cat) continue;
+    (workData[code] || []).forEach(w => {
+      const parts = w.split(' — ');
+      if (parts.length < 2) return;
+      const brand = parts[0].trim();
+      const proj = parts.slice(1).join(' — ').trim();
+      if (!brand) return;
+      if (!brandMap[brand]) brandMap[brand] = [];
+      brandMap[brand].push({ code, catName: cat.name, proj });
+    });
+  }
+  return brandMap;
+}
+
+function findCatByCode(code) {
+  for (const section of sections) {
+    for (const sub of section.subsections) {
+      const cat = sub.cats.find(c => c.code === code);
+      if (cat) return cat;
+    }
+  }
+  return null;
+}
+
+function renderBrandTags() {
+  const wrap = document.getElementById('brandTagsWrap');
+  const brandMap = getBrandMap();
+  const brands = Object.keys(brandMap).sort();
+  if (brands.length === 0) {
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.innerHTML = brands.map(b => `
+    <span class="brand-tag" data-brand="${b}" onclick="showBrandPanel('${b.replace(/'/g, "\\'")}')">
+      ${b} <span class="brand-tag-count">${brandMap[b].length}</span>
+    </span>
+  `).join('');
+}
+
+function showBrandPanel(brand) {
+  const brandMap = getBrandMap();
+  const items = brandMap[brand] || [];
+  const panel = document.getElementById('brandPanel');
+  panel.classList.remove('hidden');
+  panel.innerHTML = `
+    <div class="brand-panel-header">
+      <div class="brand-panel-title">${brand} — ${items.length} iş</div>
+      <button class="brand-panel-close" onclick="closeBrandPanel()">✕</button>
+    </div>
+    ${items.map(it => `
+      <div class="brand-panel-row">
+        <span class="brand-panel-cat">${it.code}</span>
+        <span class="brand-panel-proj">${it.proj}</span>
+        <span style="color:rgba(232,232,240,0.3);font-size:11px;margin-left:auto;">${it.catName}</span>
+      </div>
+    `).join('')}
+  `;
+  document.querySelectorAll('.brand-tag').forEach(t => {
+    t.classList.toggle('active', t.dataset.brand === brand);
+  });
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeBrandPanel() {
+  document.getElementById('brandPanel').classList.add('hidden');
+  document.querySelectorAll('.brand-tag').forEach(t => t.classList.remove('active'));
 }
 
 function search(q) {
@@ -1313,6 +1507,7 @@ document.getElementById('searchInput').addEventListener('input', e => {
   await loadWorkData();
   render(null);
   updateStats();
+  renderBrandTags();
 })();
 
 (function() {
