@@ -620,6 +620,117 @@
     white-space: nowrap;
   }
 
+  .works-table-actions {
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px 5px;
+    border-radius: 5px;
+    font-size: 13px;
+    opacity: 0.4;
+    transition: opacity 0.15s, background 0.15s;
+  }
+
+  .action-btn:hover { opacity: 1; background: rgba(255,255,255,0.08); }
+  .delete-btn:hover { background: rgba(239,68,68,0.15); }
+  .edit-btn:hover { background: rgba(59,130,246,0.15); }
+
+  /* Modal */
+  #editModal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-box {
+    position: relative;
+    background: #181825;
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 16px;
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e8e8f0;
+    margin-bottom: 1.2rem;
+  }
+
+  .modal-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .modal-input {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #e8e8f0;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+  }
+
+  .modal-input:focus {
+    border-color: rgba(139,92,246,0.5);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+
+  .modal-cancel {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(232,232,240,0.6);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+
+  .modal-cancel:hover { background: rgba(255,255,255,0.1); }
+
+  .modal-save {
+    background: rgba(139,92,246,0.25);
+    border: 1px solid rgba(139,92,246,0.45);
+    color: #c4b5fd;
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+
+  .modal-save:hover { background: rgba(139,92,246,0.35); }
+
   .work-item {
     display: flex;
     align-items: center;
@@ -1319,13 +1430,40 @@ async function loadWorkData() {
 
 async function saveWork(kategori_kodu, is_adi) {
   try {
-    await fetch('/api/works', {
+    const res = await fetch('/api/works', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kategori_kodu, is_adi })
     });
+    const data = await res.json();
+    return data.id || null;
   } catch (e) {
     console.error('Save failed', e);
+    return null;
+  }
+}
+
+async function deleteWork(id) {
+  try {
+    await fetch('/api/works', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+  } catch (e) {
+    console.error('Delete failed', e);
+  }
+}
+
+async function updateWork(id, is_adi) {
+  try {
+    await fetch('/api/works', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, is_adi })
+    });
+  } catch (e) {
+    console.error('Update failed', e);
   }
 }
 
@@ -1372,15 +1510,21 @@ function render(filtered) {
         const works = workData[cat.code] || [];
         const newBadge = cat.isNew ? '<span class="new-badge">yeni</span>' : '';
         const workCount = works.length > 0 ? `<span style="font-size:11px;color:${section.color.codeText};margin-left:auto;">${works.length} iş</span>` : '';
-        const worksTableRows = works.map((w, i) => {
+        const worksTableRows = works.map((entry, i) => {
+          const w = typeof entry === 'object' ? entry.val : entry;
+          const id = typeof entry === 'object' ? entry.id : null;
           const { brand, proj, status } = parseWork(w);
           const sc = STATUS_COLORS[status] || STATUS_COLORS['Sunulmadı'];
           return `
-          <tr>
+          <tr data-work-id="${id}" data-cat-code="${cat.code}">
             <td class="works-table-num">${i + 1}</td>
             <td class="works-table-brand" style="color:${section.color.codeText};border-left-color:${section.color.dot}">${brand}</td>
             <td class="works-table-name">${proj}</td>
             <td><span class="status-badge" style="background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${status}</span></td>
+            <td class="works-table-actions">
+              <button class="action-btn edit-btn" onclick="editWork(event, ${id}, '${cat.code}', '${w.replace(/'/g, "\\'")}')" title="Düzenle">✏️</button>
+              <button class="action-btn delete-btn" onclick="removeWork(event, ${id}, '${cat.code}')" title="Sil">🗑</button>
+            </td>
           </tr>`;
         }).join('');
         const worksTable = works.length > 0 ? `
@@ -1391,6 +1535,7 @@ function render(filtered) {
                 <th style="border-bottom-color:${section.color.border}">Marka</th>
                 <th style="border-bottom-color:${section.color.border}">Proje</th>
                 <th style="border-bottom-color:${section.color.border}">Durum</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>${worksTableRows}</tbody>
@@ -1491,11 +1636,11 @@ async function addWork(code) {
   if (!brand || !proj) return;
   const val = `${brand} — ${proj} — ${status}`;
   if (!workData[code]) workData[code] = [];
-  workData[code].push(val);
+  const id = await saveWork(code, val);
+  workData[code].push({ id, val });
   brandInput.value = '';
   projInput.value = '';
   statusInput.value = 'Sunulmadı';
-  await saveWork(code, val);
 
   const lastSearch = document.getElementById('searchInput').value;
   if (lastSearch) {
@@ -1550,7 +1695,8 @@ function getBrandMap() {
   for (const code in workData) {
     const cat = findCatByCode(code);
     if (!cat) continue;
-    (workData[code] || []).forEach(w => {
+    (workData[code] || []).forEach(entry => {
+      const w = typeof entry === 'object' ? entry.val : entry;
       const { brand, proj, status } = parseWork(w);
       if (!brand) return;
       if (!brandMap[brand]) brandMap[brand] = [];
@@ -1566,7 +1712,8 @@ function getStatusMap() {
   for (const code in workData) {
     const cat = findCatByCode(code);
     if (!cat) continue;
-    (workData[code] || []).forEach(w => {
+    (workData[code] || []).forEach(entry => {
+      const w = typeof entry === 'object' ? entry.val : entry;
       const { brand, proj, status } = parseWork(w);
       if (!brand) return;
       if (!statusMap[status]) statusMap[status] = [];
@@ -1703,6 +1850,72 @@ function showBrandPanel(brand) {
   document.querySelectorAll('.cat-item').forEach(c => c.classList.add('expanded'));
 
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function removeWork(e, id, code) {
+  e.stopPropagation();
+  if (!confirm('Bu işi silmek istediğinden emin misin?')) return;
+  workData[code] = (workData[code] || []).filter(entry => {
+    const entryId = typeof entry === 'object' ? entry.id : null;
+    return entryId !== id;
+  });
+  await deleteWork(id);
+  render(null);
+  renderBrandTags();
+  renderStatusTags();
+  updateStats();
+}
+
+function editWork(e, id, code, currentVal) {
+  e.stopPropagation();
+  const { brand, proj, status } = parseWork(currentVal);
+
+  // Mevcut modal varsa kaldır
+  const existing = document.getElementById('editModal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'editModal';
+  modal.innerHTML = `
+    <div class="modal-overlay" onclick="closeEditModal()"></div>
+    <div class="modal-box">
+      <div class="modal-title">İşi Düzenle</div>
+      <div class="modal-fields">
+        <input class="modal-input" id="edit-brand" value="${brand}" placeholder="Marka...">
+        <input class="modal-input" id="edit-proj" value="${proj}" placeholder="Proje adı...">
+        <select class="status-select" id="edit-status">
+          ${STATUS_LIST.map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cancel" onclick="closeEditModal()">İptal</button>
+        <button class="modal-save" onclick="saveEditWork(${id}, '${code}')">Kaydet</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+async function saveEditWork(id, code) {
+  const brand = document.getElementById('edit-brand').value.trim();
+  const proj = document.getElementById('edit-proj').value.trim();
+  const status = document.getElementById('edit-status').value;
+  if (!brand || !proj) return;
+  const newVal = `${brand} — ${proj} — ${status}`;
+
+  const entry = (workData[code] || []).find(e => (typeof e === 'object' ? e.id : null) === id);
+  if (entry) entry.val = newVal;
+
+  await updateWork(id, newVal);
+  closeEditModal();
+  render(null);
+  renderBrandTags();
+  renderStatusTags();
+}
+
+function closeEditModal() {
+  const modal = document.getElementById('editModal');
+  if (modal) modal.remove();
 }
 
 function closeBrandPanel() {
