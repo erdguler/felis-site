@@ -113,15 +113,12 @@
   header h1 {
     font-size: clamp(2rem, 5vw, 3.5rem);
     font-weight: 800;
-    background: linear-gradient(135deg, #e8e8f0 0%, #a78bfa 50%, #60a5fa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #e8e8f0;
     letter-spacing: -0.02em;
     line-height: 1.2;
     margin-bottom: 0.8rem;
-    padding-bottom: 0.1em;
     display: block;
+    text-shadow: 0 0 40px rgba(167, 139, 250, 0.5);
   }
 
   header p {
@@ -852,7 +849,6 @@
     .stats-bar { gap: 1.2rem; }
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -1989,47 +1985,140 @@ function closeEditModal() {
 }
 
 function downloadExcel() {
-  const rows = [['Kategori Kodu', 'Kategori Adı', 'Ana Başlık', 'Marka', 'Proje', 'Ajans', 'Durum']];
-
+  // Tüm işleri section bazında grupla
+  const sectionRows = {};
   for (const code in workData) {
     const cat = findCatByCode(code);
-    const sectionTitle = cat ? (() => {
-      for (const section of sections) {
-        for (const sub of section.subsections) {
-          if (sub.cats.find(c => c.code === code)) return section.title;
-        }
+    if (!cat) continue;
+    let sectionTitle = '';
+    for (const section of sections) {
+      for (const sub of section.subsections) {
+        if (sub.cats.find(c => c.code === code)) { sectionTitle = section.title; break; }
       }
-      return '';
-    })() : '';
-
+      if (sectionTitle) break;
+    }
+    if (!sectionRows[sectionTitle]) sectionRows[sectionTitle] = [];
     (workData[code] || []).forEach(entry => {
       const w = typeof entry === 'object' ? entry.val : entry;
       const { brand, proj, agency, status } = parseWork(w);
-      rows.push([
-        code,
-        cat ? cat.name : '',
-        sectionTitle,
-        brand,
-        proj,
-        agency || '',
-        status
-      ]);
+      sectionRows[sectionTitle].push({ code, catName: cat.name, brand, proj, agency: agency || '—', status });
     });
   }
 
-  if (rows.length === 1) {
-    alert('Henüz eklenmiş iş yok.');
-    return;
-  }
+  const totalCount = Object.values(sectionRows).reduce((s, arr) => s + arr.length, 0);
+  if (totalCount === 0) { alert('Henüz eklenmiş iş yok.'); return; }
 
-  const ws = XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols'] = [
-    { wch: 12 }, { wch: 40 }, { wch: 20 },
-    { wch: 20 }, { wch: 35 }, { wch: 16 }, { wch: 22 }
+  const STATUS_BG = {
+    'Sunulmadı': '#e5e7eb',
+    'Müşteri Onayında': '#fef3c7',
+    'Prodüksiyon Aşamasında': '#dbeafe',
+    'Yayınlandı': '#d1fae5',
+  };
+  const STATUS_FG = {
+    'Sunulmadı': '#6b7280',
+    'Müşteri Onayında': '#92400e',
+    'Prodüksiyon Aşamasında': '#1e40af',
+    'Yayınlandı': '#065f46',
+  };
+  const SECTION_COLORS = [
+    '#7c3aed','#db2777','#0d9488','#2563eb','#d97706',
+    '#dc2626','#059669','#7c3aed','#f97316','#6366f1',
+    '#f43f5e','#9ca3af','#06b6d4','#a855f7','#22c55e','#ef4444',
   ];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Felis Girişleri');
-  XLSX.writeFile(wb, 'felis-odulleri.xlsx');
+
+  let tableRows = '';
+  const sectionKeys = Object.keys(sectionRows);
+
+  sectionKeys.forEach((sTitle, si) => {
+    const color = SECTION_COLORS[si % SECTION_COLORS.length];
+    const rows = sectionRows[sTitle];
+    if (!rows.length) return;
+
+    // Bölüm başlığı satırı
+    tableRows += `
+      <tr>
+        <td colspan="7" style="
+          background:${color};
+          color:#ffffff;
+          font-size:13pt;
+          font-weight:bold;
+          padding:10px 14px;
+          border:none;
+          letter-spacing:0.03em;
+        ">${sTitle}</td>
+      </tr>`;
+
+    rows.forEach((row, i) => {
+      const rowBg = i % 2 === 0 ? '#ffffff' : '#f9fafb';
+      const sBg = STATUS_BG[row.status] || '#e5e7eb';
+      const sFg = STATUS_FG[row.status] || '#374151';
+      tableRows += `
+        <tr>
+          <td style="background:${rowBg};padding:8px 10px;border:1px solid #e5e7eb;font-family:monospace;font-size:9pt;color:${color};font-weight:bold">${row.code}</td>
+          <td style="background:${rowBg};padding:8px 10px;border:1px solid #e5e7eb;font-size:10pt;color:#111827">${row.catName}</td>
+          <td style="background:${rowBg};padding:8px 10px;border:1px solid #e5e7eb;font-size:10pt;font-weight:600;color:#1f2937">${row.brand}</td>
+          <td style="background:${rowBg};padding:8px 10px;border:1px solid #e5e7eb;font-size:10pt;color:#374151">${row.proj}</td>
+          <td style="background:${rowBg};padding:8px 10px;border:1px solid #e5e7eb;font-size:10pt;color:#4b5563;text-align:center">${row.agency}</td>
+          <td style="background:${sBg};padding:8px 10px;border:1px solid #e5e7eb;font-size:9pt;font-weight:700;color:${sFg};text-align:center">${row.status}</td>
+        </tr>`;
+    });
+
+    // Gruplar arası boşluk
+    tableRows += `<tr><td colspan="7" style="height:8px;background:#f3f4f6;border:none"></td></tr>`;
+  });
+
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="UTF-8">
+      <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+        <x:ExcelWorksheet><x:Name>Felis Girişleri</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+        </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+    </head>
+    <body>
+      <table style="border-collapse:collapse;font-family:Arial,sans-serif;width:100%">
+        <!-- Ana Başlık -->
+        <tr>
+          <td colspan="7" style="
+            background:#1e1b4b;
+            color:#ffffff;
+            font-size:18pt;
+            font-weight:bold;
+            padding:16px 18px;
+            letter-spacing:0.05em;
+            border:none;
+          ">🏆 FELİS ÖDÜLLERİ — Kategori Giriş Listesi</td>
+        </tr>
+        <tr>
+          <td colspan="7" style="background:#1e1b4b;color:rgba(255,255,255,0.5);font-size:9pt;padding:4px 18px 12px;border:none">
+            Toplam ${totalCount} iş — ${new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'long',year:'numeric'})}
+          </td>
+        </tr>
+        <!-- Boşluk -->
+        <tr><td colspan="7" style="height:6px;background:#f3f4f6;border:none"></td></tr>
+        <!-- Kolon Başlıkları -->
+        <tr>
+          <td style="background:#312e81;color:#fff;font-weight:bold;padding:10px;font-size:10pt;border:1px solid #4338ca">Kod</td>
+          <td style="background:#312e81;color:#fff;font-weight:bold;padding:10px;font-size:10pt;border:1px solid #4338ca">Kategori</td>
+          <td style="background:#312e81;color:#fff;font-weight:bold;padding:10px;font-size:10pt;border:1px solid #4338ca">Marka</td>
+          <td style="background:#312e81;color:#fff;font-weight:bold;padding:10px;font-size:10pt;border:1px solid #4338ca">Proje</td>
+          <td style="background:#312e81;color:#fff;font-weight:bold;padding:10px;font-size:10pt;border:1px solid #4338ca;text-align:center">Ajans</td>
+          <td style="background:#312e81;color:#fff;font-weight:bold;padding:10px;font-size:10pt;border:1px solid #4338ca;text-align:center">Durum</td>
+        </tr>
+        ${tableRows}
+      </table>
+    </body></html>`;
+
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `felis-odulleri-${new Date().toISOString().slice(0,10)}.xls`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function closeBrandPanel() {
