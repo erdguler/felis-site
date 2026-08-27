@@ -118,8 +118,10 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     letter-spacing: -0.02em;
-    line-height: 1.1;
+    line-height: 1.2;
     margin-bottom: 0.8rem;
+    padding-bottom: 0.1em;
+    display: block;
   }
 
   header p {
@@ -154,6 +156,27 @@
     letter-spacing: 0.1em;
   }
 
+  .excel-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.2rem;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #4ade80;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.03em;
+  }
+
+  .excel-btn:hover {
+    background: rgba(34,197,94,0.2);
+    border-color: rgba(34,197,94,0.5);
+  }
   .search-bar {
     max-width: 600px;
     margin: 2rem auto 0;
@@ -620,6 +643,18 @@
     white-space: nowrap;
   }
 
+  .agency-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    background: rgba(255,255,255,0.07);
+    color: rgba(232,232,240,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
   .works-table-actions {
     white-space: nowrap;
     text-align: right;
@@ -817,6 +852,7 @@
     .stats-bar { gap: 1.2rem; }
   }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -841,6 +877,7 @@
     <div class="stat"><div class="stat-num" id="total-cats">—</div><div class="stat-label">Kategori</div></div>
     <div class="stat"><div class="stat-num" id="total-works">0</div><div class="stat-label">Eklenen İş</div></div>
   </div>
+  <button class="excel-btn" onclick="downloadExcel()">⬇ Excel İndir</button>
   <div class="search-bar">
     <span class="search-icon">🔍</span>
     <input type="text" id="searchInput" placeholder="Kategori ara... (örn: film, dijital, sosyal medya)">
@@ -1513,13 +1550,15 @@ function render(filtered) {
         const worksTableRows = works.map((entry, i) => {
           const w = typeof entry === 'object' ? entry.val : entry;
           const id = typeof entry === 'object' ? entry.id : null;
-          const { brand, proj, status } = parseWork(w);
+          const { brand, proj, agency, status } = parseWork(w);
           const sc = STATUS_COLORS[status] || STATUS_COLORS['Sunulmadı'];
+          const agencyBadge = agency ? `<span class="agency-badge">${agency}</span>` : '';
           return `
           <tr data-work-id="${id}" data-cat-code="${cat.code}">
             <td class="works-table-num">${i + 1}</td>
             <td class="works-table-brand" style="color:${section.color.codeText};border-left-color:${section.color.dot}">${brand}</td>
             <td class="works-table-name">${proj}</td>
+            <td>${agencyBadge}</td>
             <td><span class="status-badge" style="background:${sc.bg};color:${sc.text};border:1px solid ${sc.border}">${status}</span></td>
             <td class="works-table-actions">
               <button class="action-btn edit-btn" onclick="editWork(event, ${id}, '${cat.code}', '${w.replace(/'/g, "\\'")}')" title="Düzenle">✏️</button>
@@ -1534,6 +1573,7 @@ function render(filtered) {
                 <th></th>
                 <th style="border-bottom-color:${section.color.border}">Marka</th>
                 <th style="border-bottom-color:${section.color.border}">Proje</th>
+                <th style="border-bottom-color:${section.color.border}">Ajans</th>
                 <th style="border-bottom-color:${section.color.border}">Durum</th>
                 <th></th>
               </tr>
@@ -1553,7 +1593,12 @@ function render(filtered) {
                 <div id="wlist-${cat.code}"></div>
                 <div class="add-work-input">
                   <input type="text" id="winput-brand-${cat.code}" placeholder="Marka..." onkeydown="if(event.key==='Enter')document.getElementById('winput-proj-${cat.code}').focus()">
-                  <input type="text" id="winput-proj-${cat.code}" placeholder="Proje adı..." onkeydown="if(event.key==='Enter')document.getElementById('winput-status-${cat.code}').focus()">
+                  <input type="text" id="winput-proj-${cat.code}" placeholder="Proje adı..." onkeydown="if(event.key==='Enter')document.getElementById('winput-agency-${cat.code}').focus()">
+                  <select id="winput-agency-${cat.code}" class="status-select">
+                    <option value="Leo">Leo</option>
+                    <option value="Saatchi">Saatchi</option>
+                    <option value="Publicis Media">Publicis Media</option>
+                  </select>
                   <select id="winput-status-${cat.code}" class="status-select">
                     <option value="Sunulmadı">Sunulmadı</option>
                     <option value="Müşteri Onayında">Müşteri Onayında</option>
@@ -1629,17 +1674,20 @@ function toggleWorkPanel(e, code, color, dot) {
 async function addWork(code) {
   const brandInput = document.getElementById('winput-brand-' + code);
   const projInput = document.getElementById('winput-proj-' + code);
+  const agencyInput = document.getElementById('winput-agency-' + code);
   const statusInput = document.getElementById('winput-status-' + code);
   const brand = brandInput.value.trim();
   const proj = projInput.value.trim();
+  const agency = agencyInput.value;
   const status = statusInput.value;
   if (!brand || !proj) return;
-  const val = `${brand} — ${proj} — ${status}`;
+  const val = `${brand} — ${proj} — ${agency} — ${status}`;
   if (!workData[code]) workData[code] = [];
   const id = await saveWork(code, val);
   workData[code].push({ id, val });
   brandInput.value = '';
   projInput.value = '';
+  agencyInput.value = 'Leo';
   statusInput.value = 'Sunulmadı';
 
   const lastSearch = document.getElementById('searchInput').value;
@@ -1670,24 +1718,43 @@ const STATUS_COLORS = {
   'Yayınlandı': { bg: 'rgba(16,185,129,0.15)', text: '#34d399', border: 'rgba(16,185,129,0.3)' },
 };
 
+const AGENCY_LIST = ['Leo', 'Saatchi', 'Publicis Media'];
+
 function parseWork(w) {
   const parts = w.split(' — ');
-  let brand = '', proj = w, status = 'Sunulmadı';
-  if (parts.length >= 3) {
+  let brand = '', proj = w, agency = '', status = 'Sunulmadı';
+
+  if (parts.length >= 4) {
+    // yeni format: Marka — Proje — Ajans — Durum
     brand = parts[0].trim();
     status = parts[parts.length - 1].trim();
-    proj = parts.slice(1, parts.length - 1).join(' — ').trim();
+    agency = parts[parts.length - 2].trim();
+    proj = parts.slice(1, parts.length - 2).join(' — ').trim();
     if (!STATUS_LIST.includes(status)) {
-      // last part isn't actually a status (older data), treat as part of project name
+      // son parça durum değilse eski format: Marka — Proje — Durum
+      status = parts[parts.length - 1].trim();
+      agency = '';
+      proj = parts.slice(1, parts.length - 1).join(' — ').trim();
+      if (!STATUS_LIST.includes(status)) {
+        proj = parts.slice(1).join(' — ').trim();
+        status = 'Sunulmadı';
+      }
+    }
+  } else if (parts.length === 3) {
+    // eski format: Marka — Proje — Durum
+    brand = parts[0].trim();
+    status = parts[2].trim();
+    proj = parts[1].trim();
+    if (!STATUS_LIST.includes(status)) {
       proj = parts.slice(1).join(' — ').trim();
       status = 'Sunulmadı';
     }
   } else if (parts.length === 2) {
     brand = parts[0].trim();
     proj = parts[1].trim();
-    status = 'Sunulmadı';
   }
-  return { brand, proj, status };
+
+  return { brand, proj, agency, status };
 }
 
 function getBrandMap() {
@@ -1868,9 +1935,8 @@ async function removeWork(e, id, code) {
 
 function editWork(e, id, code, currentVal) {
   e.stopPropagation();
-  const { brand, proj, status } = parseWork(currentVal);
+  const { brand, proj, agency, status } = parseWork(currentVal);
 
-  // Mevcut modal varsa kaldır
   const existing = document.getElementById('editModal');
   if (existing) existing.remove();
 
@@ -1883,7 +1949,10 @@ function editWork(e, id, code, currentVal) {
       <div class="modal-fields">
         <input class="modal-input" id="edit-brand" value="${brand}" placeholder="Marka...">
         <input class="modal-input" id="edit-proj" value="${proj}" placeholder="Proje adı...">
-        <select class="status-select" id="edit-status">
+        <select class="status-select" id="edit-agency" style="width:100%">
+          ${AGENCY_LIST.map(a => `<option value="${a}" ${a === agency ? 'selected' : ''}>${a}</option>`).join('')}
+        </select>
+        <select class="status-select" id="edit-status" style="width:100%">
           ${STATUS_LIST.map(s => `<option value="${s}" ${s === status ? 'selected' : ''}>${s}</option>`).join('')}
         </select>
       </div>
@@ -1899,9 +1968,10 @@ function editWork(e, id, code, currentVal) {
 async function saveEditWork(id, code) {
   const brand = document.getElementById('edit-brand').value.trim();
   const proj = document.getElementById('edit-proj').value.trim();
+  const agency = document.getElementById('edit-agency').value;
   const status = document.getElementById('edit-status').value;
   if (!brand || !proj) return;
-  const newVal = `${brand} — ${proj} — ${status}`;
+  const newVal = `${brand} — ${proj} — ${agency} — ${status}`;
 
   const entry = (workData[code] || []).find(e => (typeof e === 'object' ? e.id : null) === id);
   if (entry) entry.val = newVal;
@@ -1916,6 +1986,50 @@ async function saveEditWork(id, code) {
 function closeEditModal() {
   const modal = document.getElementById('editModal');
   if (modal) modal.remove();
+}
+
+function downloadExcel() {
+  const rows = [['Kategori Kodu', 'Kategori Adı', 'Ana Başlık', 'Marka', 'Proje', 'Ajans', 'Durum']];
+
+  for (const code in workData) {
+    const cat = findCatByCode(code);
+    const sectionTitle = cat ? (() => {
+      for (const section of sections) {
+        for (const sub of section.subsections) {
+          if (sub.cats.find(c => c.code === code)) return section.title;
+        }
+      }
+      return '';
+    })() : '';
+
+    (workData[code] || []).forEach(entry => {
+      const w = typeof entry === 'object' ? entry.val : entry;
+      const { brand, proj, agency, status } = parseWork(w);
+      rows.push([
+        code,
+        cat ? cat.name : '',
+        sectionTitle,
+        brand,
+        proj,
+        agency || '',
+        status
+      ]);
+    });
+  }
+
+  if (rows.length === 1) {
+    alert('Henüz eklenmiş iş yok.');
+    return;
+  }
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 40 }, { wch: 20 },
+    { wch: 20 }, { wch: 35 }, { wch: 16 }, { wch: 22 }
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Felis Girişleri');
+  XLSX.writeFile(wb, 'felis-odulleri.xlsx');
 }
 
 function closeBrandPanel() {
